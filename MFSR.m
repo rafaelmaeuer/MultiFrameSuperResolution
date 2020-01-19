@@ -87,11 +87,11 @@ function cmdLoad_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % Open dialog to retreive the filename
-[FileName,PathName] = uigetfile('*.mat','Select the movie MAT file');
+[FileName,PathName] = uigetfile('*.avi','Select the movie AVI file');
 
 if FileName ~= 0
 
-  handles.LR=LoadVideoMat([PathName FileName]);
+  handles.LR=LoadVideo([PathName FileName]);
   handles.LRDisplayI = 1;
 
   set(handles.cmdRegister, 'enable', 'on');
