@@ -73,36 +73,5 @@ if ~isempty(X)
   end
   
 end
-%   
-%   % Compute 
-%   
-%   % Interpolate the holes with the weighted average of the determined pixels
-%   [Xd,Yd] = find(S);
-%   
-%   % Loop on each hole
-%   for i=1:length(X)
-%     
-%     % Compute a factor based on distance from each determined pixel to the hole
-%     Alpha=0.7.^(abs(Xd-X(i))+abs(Yd-Y(i)));
-%     % Normalize alpha
-%     Alpha = Alpha./sum(Alpha);
-%     
-%     % Loop on each shift and set the factor value for it
-%     for j=1:length(Xd)
-%       
-%       x =X(i)+Dres-1;
-%       y =Y(i)+Dres-1;
-%       xd=Xd(j)+Dres-1;
-%       yd=Yd(j)+Dres-1;
-%       
-%       Z(y:Dres:size(Z, 1),x:Dres:size(Z, 2))=...
-%         Z(y:Dres:size(Z, 1),x:Dres:size(Z, 2))+...
-%         Z(yd:Dres:size(Z, 1),xd:Dres:size(Z, 2)).*Alpha(j);
-%       
-%     end
-%     
-%   end
-%   
-% end
 
 A = sqrt(A);
