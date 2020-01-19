@@ -99,7 +99,6 @@ if FileName ~= 0
   set(handles.cmdClear, 'enable', 'off');
   set(handles.cmdSave, 'enable', 'off');
   set(handles.cmdSaveLR, 'enable', 'on');
-  set(handles.cbShowReg, 'enable', 'off');
 
   % Update LR display
   UpdateLRDisplay(hObject, handles)
@@ -125,14 +124,7 @@ guidata(hObject, handles);
 function UpdateLRDisplay(hObject, handles)
 
 axes(handles.axesLR);
-if get(handles.cbShowReg, 'Value')
-  imagesc(handles.LR(:,:,handles.LRDisplayI));colormap('gray')
-else
-  tform = maketform('affine',[1 0 0; 0 1 0; handles.D(handles.LRDisplayI, :) 1]);
-  sz = size(handles.LR(:,:,handles.LRDisplayI));
-  img = imtransform(squeeze(handles.LR(:,:,handles.LRDisplayI)),tform,'bilinear','XData',[1 sz(2)], 'YData',[1 sz(1)]);
-  imagesc(img);colormap('gray')
-end
+imagesc(handles.LR(:,:,handles.LRDisplayI));colormap('gray')
 
 axis(handles.axesLR,'off');
 
@@ -172,12 +164,7 @@ function cmdSave_Callback(hObject, eventdata, handles)
 [FileName,PathName] = uiputfile('*.jpg','Save image file');
 
 if FileName ~= 0
-
-  if get(handles.cbSelectHR, 'Value')
-    imwrite(uint8(handles.HR), [PathName FileName]);
-  else
-    imwrite(uint8(handles.prevHR), [PathName FileName]);
-  end
+  imwrite(uint8(handles.HR), [PathName FileName]);
 end
 
 % --- Executes on button press in cmdClear.
@@ -208,7 +195,6 @@ function cmdRegister_Callback(hObject, eventdata, handles)
 handles.D=RegisterImageSeq(handles.LR);
 
 set(handles.cmdSR, 'enable', 'on');
-set(handles.cbShowReg, 'enable', 'on');
 
 % Update handles structure
 guidata(hObject, handles);
@@ -479,31 +465,10 @@ end
 function DisplayHRImage(hObject, handles)
 axes(handles.axesHR);
 
-if get(handles.cbSelectHR, 'Value')
-  imagesc(handles.HR);
-else
-  imagesc(handles.prevHR);
-end
+imagesc(handles.HR);
 
 colormap('gray')
 axis(handles.axesHR,'off');
-
-
-% --- Executes on button press in cbSelectHR.
-function cbSelectHR_Callback(hObject, eventdata, handles)
-% hObject    handle to cbSelectHR (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of cbSelectHR
-DisplayHRImage(hObject, handles)
-
-if get(handles.cbSelectHR, 'Value')
-  set(handles.cbSelectHR, 'String', 'Displaying Current Image');
-else
-  set(handles.cbSelectHR, 'String', 'Displaying Previous Image');
-end
-
 
 % Update handles structure
 guidata(hObject, handles);
@@ -521,26 +486,3 @@ if FileName ~= 0
 
   imwrite(uint8(handles.LR(:,:,handles.LRDisplayI)), [PathName FileName]);
 end
-
-
-
-% --- Executes on button press in cbShowReg.
-function cbShowReg_Callback(hObject, eventdata, handles)
-% hObject    handle to cbShowReg (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of cbShowReg
-UpdateLRDisplay(hObject, handles)
-
-if get(handles.cbShowReg, 'Value')
-  set(handles.cbShowReg, 'String', 'Displaying Unregistered Images');
-else
-  set(handles.cbShowReg, 'String', 'Displaying Registered Images');
-end
-
-
-% Update handles structure
-guidata(hObject, handles);
-
-
