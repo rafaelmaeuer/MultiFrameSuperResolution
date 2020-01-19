@@ -176,11 +176,8 @@ cla(handles.axesHR);
 
 set(handles.cmdClear, 'enable', 'off');
 set(handles.cmdSave, 'enable', 'off');
-set(handles.rbRobust, 'enable', 'off');
 
-if get(handles.gbSRType, 'SelectedObject') == handles.rbRobust
-  set(handles.gbSRType, 'SelectedObject', handles.rbFast);
-end
+set(handles.gbSRType, 'SelectedObject', handles.rbFast);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -208,28 +205,13 @@ function cmdSR_Callback(hObject, eventdata, handles)
 
 handles.prevHR = handles.HR;
 
-% Check the selected algorithm 
-switch get(handles.gbSRType, 'SelectedObject')
-  
-  case handles.rbSpline
-   
-    handles.HR=SplineSRInterp(LR, resFactor, Hpsf, props);
-    
-  case handles.rbRobust
-
-    handles.HR=RobustSR(LR(3:end-2,3:end-2,:), D, handles.HR, resFactor, Hpsf, props);
-
-  case handles.rbFast
-
-    handles.HR=FastRobustSR(LR(3:end-2,3:end-2,:), D, resFactor, Hpsf, props);
-    
-end
+% Set the Super Resolution algorithm
+handles.HR=FastRobustSR(LR(3:end-2,3:end-2,:), D, resFactor, Hpsf, props);
 
 DisplayHRImage(hObject, handles);
 
 set(handles.cmdClear, 'enable', 'on');
 set(handles.cmdSave, 'enable', 'on');
-set(handles.rbRobust, 'enable', 'on');
 
 % Update handles structure
 guidata(hObject, handles);
