@@ -128,7 +128,7 @@ imagesc(handles.LR(:,:,handles.LRDisplayI));colormap('gray')
 
 axis(handles.axesLR,'off');
 
-set(handles.lblLRImg, 'String', sprintf('Low Resolution Image: %u out of %u', handles.LRDisplayI, size(handles.LR,3)));
+set(handles.lblLRImg, 'String', sprintf('Low Resolution Image %u of %u', handles.LRDisplayI, size(handles.LR,3)));
 
 % Update scan buttons
 LRScanButtonEnable(hObject, handles)
