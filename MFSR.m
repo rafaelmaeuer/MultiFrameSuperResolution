@@ -1,35 +1,35 @@
-function varargout = SRDemo(varargin)
-% SRDEMO M-file for SRDemo.fig
-%      SRDEMO, by itself, creates a new SRDEMO or raises the existing
+function varargout = MFSR(varargin)
+% MFSR M-file for MFSR.fig
+%      MFSR, by itself, creates a new MFSR or raises the existing
 %      singleton*.
 %
-%      H = SRDEMO returns the handle to a new SRDEMO or the handle to
+%      H = MFSR returns the handle to a new MFSR or the handle to
 %      the existing singleton*.
 %
-%      SRDEMO('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in SRDEMO.M with the given input arguments.
+%      MFSR('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in MFSR.M with the given input arguments.
 %
-%      SRDEMO('Property','Value',...) creates a new SRDEMO or raises the
+%      MFSR('Property','Value',...) creates a new MFSR or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
 %      applied to the GUI before SRDemo_OpeningFunction gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to SRDemo_OpeningFcn via varargin.
+%      stop.  All inputs are passed to MFSR_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help SRDemo
+% Edit the above text to modify the response to help MFSR
 
-% Last Modified by GUIDE v2.5 04-Aug-2007 16:12:26
+% Last Modified by GUIDE v2.5 19-Jan-2020 21:52:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
   'gui_Singleton',  gui_Singleton, ...
-  'gui_OpeningFcn', @SRDemo_OpeningFcn, ...
-  'gui_OutputFcn',  @SRDemo_OutputFcn, ...
+  'gui_OpeningFcn', @MFSR_OpeningFcn, ...
+  'gui_OutputFcn',  @MFSR_OutputFcn, ...
   'gui_LayoutFcn',  [] , ...
   'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,18 +44,18 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before SRDemo is made visible.
-function SRDemo_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before MFSR is made visible.
+function MFSR_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to SRDemo (see VARARGIN)
+% varargin   command line arguments to MFSR (see VARARGIN)
 
 addpath([pwd '/MFSR']);
 addpath([pwd '/MFSR/LKOFlow']);
 
-% Choose default command line output for SRDemo
+% Choose default command line output for MFSR
 handles.output = hObject;
 axis(handles.axesLR,'off');
 axis(handles.axesHR,'off');
@@ -66,12 +66,12 @@ handles.HR = [];
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes SRDemo wait for user response (see UIRESUME)
+% UIWAIT makes MFSR wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = SRDemo_OutputFcn(hObject, eventdata, handles)
+function varargout = MFSR_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
