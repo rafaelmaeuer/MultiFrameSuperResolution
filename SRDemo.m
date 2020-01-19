@@ -52,7 +52,8 @@ function SRDemo_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to SRDemo (see VARARGIN)
 
-addpath([pwd '/LKOFlow']);
+addpath([pwd '/MFSR']);
+addpath([pwd '/MFSR/LKOFlow']);
 
 % Choose default command line output for SRDemo
 handles.output = hObject;
