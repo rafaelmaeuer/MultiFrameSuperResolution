@@ -223,15 +223,14 @@ try
 
   resFactor = str2double(get(handles.txtResFactor, 'String'));
 
-  psfSize = str2double(get(handles.txtPsfSize, 'String'));
-  psfSig =  str2double(get(handles.txtPsfSig, 'String'));
+  psfSize = 3;
+  psfSig = 1;
   Hpsf = fspecial('gaussian', [psfSize psfSize], psfSig);
 
-
-  props.alpha = str2double(get(handles.txtAlpha, 'String'));
-  props.beta = str2double(get(handles.txtBeta, 'String'));
-  props.lambda = str2double(get(handles.txtLambda, 'String'));
-  props.P = str2double(get(handles.txtP, 'String'));
+  props.alpha = 0.7;
+  props.beta = 1;
+  props.lambda = 0.04;
+  props.P = 2;
   props.maxIter = str2double(get(handles.txtIterNum, 'String'));
 
   % Round translation to nearest neighbor
