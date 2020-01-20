@@ -52,6 +52,7 @@ function MFSR_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to MFSR (see VARARGIN)
 
+% Load all components
 addpath([pwd '/MFSR']);
 addpath([pwd '/MFSR/LKOFlow']);
 
@@ -89,22 +90,27 @@ function cmdLoad_Callback(hObject, eventdata, handles)
 % Open dialog to retreive the filename
 [FileName,PathName] = uigetfile('*.avi','Select the movie AVI file');
 
+% Check if file exists
 if FileName ~= 0
 
+  % Load video file
   handles.LR=LoadVideo([PathName FileName]);
   handles.LRDisplayI = 1;
 
+  % Set button handles
   set(handles.cmdRegister, 'enable', 'on');
   set(handles.cmdSR, 'enable', 'off');
   set(handles.cmdClear, 'enable', 'off');
   set(handles.cmdSave, 'enable', 'off');
   set(handles.cmdSaveLR, 'enable', 'on');
 
-  % Update LR display
+  % Update low resolution display area
   UpdateLRDisplay(hObject, handles)
 
 end
 
+
+% Function to handle scan button input
 function LRScanButtonEnable(hObject, handles)
 
 if handles.LRDisplayI == 1
@@ -121,6 +127,8 @@ end
 % Update handles structure
 guidata(hObject, handles);
 
+
+% Function to update low resolution display area
 function UpdateLRDisplay(hObject, handles)
 
 axes(handles.axesLR);
@@ -132,6 +140,7 @@ set(handles.lblLRImg, 'String', sprintf('Low Resolution Image %u of %u', handles
 
 % Update scan buttons
 LRScanButtonEnable(hObject, handles)
+
 
 % --- Executes on button press in cmdNext.
 function cmdNext_Callback(hObject, eventdata, handles)
@@ -167,6 +176,7 @@ if FileName ~= 0
   imwrite(uint8(handles.HR), [PathName FileName]);
 end
 
+
 % --- Executes on button press in cmdClear.
 function cmdClear_Callback(hObject, eventdata, handles)
 % hObject    handle to cmdClear (see GCBO)
@@ -196,6 +206,7 @@ set(handles.cmdSR, 'enable', 'on');
 % Update handles structure
 guidata(hObject, handles);
 
+
 % --- Executes on button press in cmdSR.
 function cmdSR_Callback(hObject, eventdata, handles)
 % hObject    handle to cmdSR (see GCBO)
@@ -208,8 +219,10 @@ handles.prevHR = handles.HR;
 % Set the Super Resolution algorithm
 handles.HR=FastRobustSR(LR(3:end-2,3:end-2,:), D, resFactor, Hpsf, props);
 
+% Show high resolution image in display area
 DisplayHRImage(hObject, handles);
 
+% Set button handles
 set(handles.cmdClear, 'enable', 'on');
 set(handles.cmdSave, 'enable', 'on');
 
@@ -217,16 +230,20 @@ set(handles.cmdSave, 'enable', 'on');
 guidata(hObject, handles);
 
 
+% Function to set params and get params from gui
 function [props, resFactor, D, LR, Hpsf] = CollectParms(hObject, handles)
 
 try
 
+  % Parameter for resolution factor
   resFactor = str2double(get(handles.txtResFactor, 'String'));
 
+  % Parameter for gaussian filter
   psfSize = 3;
   psfSig = 1;
   Hpsf = fspecial('gaussian', [psfSize psfSize], psfSig);
 
+  % Parameter for image registration
   props.alpha = 0.7;
   props.beta = 1;
   props.lambda = 0.04;
@@ -244,19 +261,13 @@ try
   [X,Y]=meshgrid(1:size(LR, 2), 1:size(LR, 1));
 
   for i=1:size(LR, 3)
-
     LR(:,:,i)=interp2(X+Dr(i,1), Y+Dr(i,2), LR(:,:,i), X, Y, '*nearest');
-
   end
 
-
 catch
-
   err = lasterror;
   errordlg(err.message,'Parsing error');
 end
-
-
 
 
 function txtResFactor_Callback(hObject, eventdata, handles)
@@ -281,7 +292,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function txtPsfSize_Callback(hObject, eventdata, handles)
 % hObject    handle to txtPsfSize (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -302,7 +312,6 @@ function txtPsfSize_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end
-
 
 
 function txtAlpha_Callback(hObject, eventdata, handles)
@@ -327,7 +336,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function txtBeta_Callback(hObject, eventdata, handles)
 % hObject    handle to txtBeta (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -348,7 +356,6 @@ function txtBeta_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end
-
 
 
 function txtLambda_Callback(hObject, eventdata, handles)
@@ -373,7 +380,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function txtP_Callback(hObject, eventdata, handles)
 % hObject    handle to txtP (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -394,7 +400,6 @@ function txtP_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
   set(hObject,'BackgroundColor','white');
 end
-
 
 
 function txtIterNum_Callback(hObject, eventdata, handles)
@@ -419,9 +424,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
-
-
 function txtPsfSig_Callback(hObject, eventdata, handles)
 % hObject    handle to txtPsfSig (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -443,6 +445,8 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
   set(hObject,'BackgroundColor','white');
 end
 
+
+% Function to show high resolution image in display area
 function DisplayHRImage(hObject, handles)
 axes(handles.axesHR);
 
