@@ -216,7 +216,7 @@ switch get(handles.gbRegType, 'SelectedObject')
     handles.D=RegisterImageSeq(handles.LR);
     
   case handles.rbRegAffine
-    handles.D=RegisterImageSeqA(handles.LR);
+    handles.D=RegisterImageSeqAffine(handles.LR);
     
 end
 
