@@ -473,11 +473,11 @@ handles.prevHR = handles.HR;
 % Check the selected super reolution algorithm 
 switch get(handles.gbSRType, 'SelectedObject')
   
-  case handles.rbSpline
-    handles.HR=SplineSRInterp(LR, resFactor, Hpsf, props);
-    
   case handles.rbKernel
     handles.HR=AdaptiveKernel(LR);
+    
+  case handles.rbSpline
+    handles.HR=SplineSRInterp(LR, resFactor, Hpsf, props);
     
   case handles.rbRobust
     handles.HR=RobustSR(LR(3:end-2,3:end-2,:), D, handles.HR, resFactor, Hpsf, props);
