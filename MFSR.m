@@ -64,8 +64,10 @@ addpath([pwd '/MFSR/SuperResolution/FastRobust']);
 
 % Choose default command line output for MFSR
 handles.output = hObject;
-axis(handles.axesLR,'off');
-axis(handles.axesHR,'off');
+
+% Setup display areas for images
+setupAxes(handles.axesLR);
+%setupAxes(handles.axesHR);
 
 handles.prevHR = [];
 handles.HR = [];
@@ -75,6 +77,20 @@ guidata(hObject, handles);
 
 % UIWAIT makes MFSR wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
+
+
+% Setup axes as display area for images
+function setupAxes(axes)
+% enable given axis
+axis(axes,'on');
+
+% remove tickmarks on axis x and y
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+
+% remove labels on axis x and y
+xticklabels(axes,{});
+yticklabels(axes,{});
 
 
 % --- Outputs from this function are returned to the command line.
@@ -137,11 +153,15 @@ guidata(hObject, handles);
 % Function to update low resolution display area
 function UpdateLRDisplay(hObject, handles)
 
+% set image content to axes
 axes(handles.axesLR);
-imagesc(handles.LR(:,:,handles.LRDisplayI));colormap('gray')
+imagesc(handles.LR(:,:,handles.LRDisplayI));
+colormap('gray');
 
+% disable axes description
 axis(handles.axesLR,'off');
 
+% set image count
 set(handles.lblLRImg, 'String', sprintf('Low Resolution Image %u of %u', handles.LRDisplayI, size(handles.LR,3)));
 
 % Update scan buttons
@@ -189,6 +209,7 @@ function cmdClear_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 cla(handles.axesHR);
+setupAxes(handles.axesHR);
 
 set(handles.cmdClear, 'enable', 'off');
 set(handles.cmdSave, 'enable', 'off');
@@ -351,11 +372,13 @@ end
 
 % Function to show high resolution image in display area
 function DisplayHRImage(hObject, handles)
+
+% set image content to axes
 axes(handles.axesHR);
-
 imagesc(handles.HR);
+colormap('gray');
 
-colormap('gray')
+% disable axis description
 axis(handles.axesHR,'off');
 
 % Update handles structure
