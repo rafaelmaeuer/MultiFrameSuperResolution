@@ -56,6 +56,7 @@ function MFSR_OpeningFcn(hObject, eventdata, handles, varargin)
 addpath([pwd '/MFSR/Helper']);
 % Image Registration
 addpath([pwd '/MFSR/ImageRegistration/LKOFlow']);
+addpath([pwd '/MFSR/ImageRegistration/LKOFlowAffine']);
 % Super Resolution
 addpath([pwd '/MFSR/SuperResolution/SplineInterpolation']);
 addpath([pwd '/MFSR/SuperResolution/Robust']);
@@ -204,9 +205,20 @@ function cmdRegister_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % Register the image sequence to base image (frame 1)
-handles.D=RegisterImageSeq(handles.LR);
+
+% Check the selected registration method 
+switch get(handles.gbRegType, 'SelectedObject')
+  
+  case handles.rbRegTrans
+    handles.D=RegisterImageSeq(handles.LR);
+    
+  case handles.rbRegAffine
+    handles.D=RegisterImageSeqA(handles.LR);
+    
+end
 
 set(handles.cmdSR, 'enable', 'on');
+set(handles.cmdRegister, 'enable', 'on');
 
 % Update handles structure
 guidata(hObject, handles);
