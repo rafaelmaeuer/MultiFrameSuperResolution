@@ -73,7 +73,7 @@ handles.output = hObject;
 
 % Setup display areas for images
 setupAxes(handles.axesLR);
-%setupAxes(handles.axesHR);
+setupAxes(handles.axesHR);
 
 handles.prevHR = [];
 handles.HR = [];
@@ -102,8 +102,8 @@ function setupAxes(axes)
 axis(axes,'on');
 
 % remove tickmarks on axis x and y
-set(gca,'xtick',[])
-set(gca,'ytick',[])
+set(axes,'xtick',[])
+set(axes,'ytick',[])
 
 % remove labels on axis x and y
 xticklabels(axes,{});
