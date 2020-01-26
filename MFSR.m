@@ -22,7 +22,7 @@ function varargout = MFSR(varargin)
 
 % Edit the above text to modify the response to help MFSR
 
-% Last Modified by GUIDE v2.5 19-Jan-2020 21:52:29
+% Last Modified by GUIDE v2.5 26-Jan-2020 14:18:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -198,7 +198,6 @@ set(handles.gbSRType, 'SelectedObject', handles.rbFast);
 % Update handles structure
 guidata(hObject, handles);
 
-
 % --- Executes on button press in cmdRegister.
 function cmdRegister_Callback(hObject, eventdata, handles)
 % hObject    handle to cmdRegister (see GCBO)
@@ -209,6 +208,10 @@ function cmdRegister_Callback(hObject, eventdata, handles)
 % Check the selected registration method 
 switch get(handles.gbRegType, 'SelectedObject')
   
+  case handles.rbRegMatlab
+    %handles.D=RegisterImage();
+    fprintf('Matlab Image Registration not implemented yet\n');
+    
   case handles.rbRegTrans
     handles.D=RegisterImageSeq(handles.LR);
     
@@ -238,6 +241,10 @@ switch get(handles.gbSRType, 'SelectedObject')
   
   case handles.rbSpline
     handles.HR=SplineSRInterp(LR, resFactor, Hpsf, props);
+    
+  case handles.rbKernel
+    %handles.HR=AdaptiveKernel();
+    fprintf('Adaptive Kernel Regression not implemented yet\n');
     
   case handles.rbRobust
     handles.HR=RobustSR(LR(3:end-2,3:end-2,:), D, handles.HR, resFactor, Hpsf, props);
