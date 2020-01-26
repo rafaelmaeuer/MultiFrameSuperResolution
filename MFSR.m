@@ -65,6 +65,7 @@ addpath([pwd '/MFSR/ImageRegistration/LKOFlow']);
 addpath([pwd '/MFSR/ImageRegistration/LKOFlowAffine']);
 % Super Resolution
 addpath([pwd '/MFSR/SuperResolution/SplineInterpolation']);
+addpath([pwd '/MFSR/SuperResolution/AdaptiveKernel']);
 addpath([pwd '/MFSR/SuperResolution/Robust']);
 addpath([pwd '/MFSR/SuperResolution/FastRobust']);
 
@@ -469,8 +470,7 @@ switch get(handles.gbSRType, 'SelectedObject')
     handles.HR=SplineSRInterp(LR, resFactor, Hpsf, props);
     
   case handles.rbKernel
-    %handles.HR=AdaptiveKernel();
-    fprintf('Adaptive Kernel Regression not implemented yet\n');
+    handles.HR=AdaptiveKernel(LR);
     
   case handles.rbRobust
     handles.HR=RobustSR(LR(3:end-2,3:end-2,:), D, handles.HR, resFactor, Hpsf, props);
