@@ -327,116 +327,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-function txtPsfSize_Callback(hObject, eventdata, handles)
-% hObject    handle to txtPsfSize (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of txtPsfSize as text
-%        str2double(get(hObject,'String')) returns contents of txtPsfSize as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function txtPsfSize_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to txtPsfSize (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-  set(hObject,'BackgroundColor','white');
-end
-
-
-function txtAlpha_Callback(hObject, eventdata, handles)
-% hObject    handle to txtAlpha (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of txtAlpha as text
-%        str2double(get(hObject,'String')) returns contents of txtAlpha as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function txtAlpha_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to txtAlpha (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-  set(hObject,'BackgroundColor','white');
-end
-
-
-function txtBeta_Callback(hObject, eventdata, handles)
-% hObject    handle to txtBeta (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of txtBeta as text
-%        str2double(get(hObject,'String')) returns contents of txtBeta as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function txtBeta_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to txtBeta (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-  set(hObject,'BackgroundColor','white');
-end
-
-
-function txtLambda_Callback(hObject, eventdata, handles)
-% hObject    handle to txtLambda (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of txtLambda as text
-%        str2double(get(hObject,'String')) returns contents of txtLambda as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function txtLambda_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to txtLambda (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-  set(hObject,'BackgroundColor','white');
-end
-
-
-function txtP_Callback(hObject, eventdata, handles)
-% hObject    handle to txtP (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of txtP as text
-%        str2double(get(hObject,'String')) returns contents of txtP as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function txtP_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to txtP (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-  set(hObject,'BackgroundColor','white');
-end
-
-
 function txtIterNum_Callback(hObject, eventdata, handles)
 % hObject    handle to txtIterNum (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -449,28 +339,6 @@ function txtIterNum_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function txtIterNum_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to txtIterNum (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-  set(hObject,'BackgroundColor','white');
-end
-
-
-function txtPsfSig_Callback(hObject, eventdata, handles)
-% hObject    handle to txtPsfSig (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of txtPsfSig as text
-%        str2double(get(hObject,'String')) returns contents of txtPsfSig as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function txtPsfSig_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to txtPsfSig (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -506,3 +374,66 @@ if FileName ~= 0
 
   imwrite(uint8(handles.LR(:,:,handles.LRDisplayI)), [PathName FileName]);
 end
+
+
+% --- Executes on button press in rbSpline.
+function rbSpline_Callback(hObject, eventdata, handles)
+% hObject    handle to rbSpline (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbSpline
+
+
+% --- Executes on button press in rbFast.
+function rbFast_Callback(hObject, eventdata, handles)
+% hObject    handle to rbFast (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbFast
+
+
+% --- Executes on button press in rbKernel.
+function rbKernel_Callback(hObject, eventdata, handles)
+% hObject    handle to rbKernel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbKernel
+
+
+% --- Executes on button press in rgRegTrans.
+function rgRegTrans_Callback(hObject, eventdata, handles)
+% hObject    handle to rgRegTrans (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rgRegTrans
+
+
+% --- Executes on button press in rbRegAffine.
+function rbRegAffine_Callback(hObject, eventdata, handles)
+% hObject    handle to rbRegAffine (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbRegAffine
+
+
+% --- Executes on button press in rbRegMatlab.
+function rbRegMatlab_Callback(hObject, eventdata, handles)
+% hObject    handle to rbRegMatlab (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbRegMatlab
+
+
+% --- Executes on button press in rbRobust.
+function rbRobust_Callback(hObject, eventdata, handles)
+% hObject    handle to rbRobust (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbRobust
