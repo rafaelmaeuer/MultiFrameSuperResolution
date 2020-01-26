@@ -53,8 +53,11 @@ function MFSR_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to MFSR (see VARARGIN)
 
 % Load all components
-addpath([pwd '/MFSR']);
-addpath([pwd '/MFSR/LKOFlow']);
+addpath([pwd '/MFSR/Helper']);
+% Image Registration
+addpath([pwd '/MFSR/ImageRegistration/LKOFlow']);
+% Super Resolution
+addpath([pwd '/MFSR/SuperResolution/FastRobust']);
 
 % Choose default command line output for MFSR
 handles.output = hObject;

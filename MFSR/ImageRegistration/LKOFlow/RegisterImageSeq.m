@@ -1,3 +1,6 @@
+% D=RegisterImageSeq(M)
+%
+% Image-Registration of a given sequence of images
 function D=RegisterImageSeq(M)
 
 % Initialize d to an empty affine displacement transformation
