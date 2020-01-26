@@ -57,6 +57,8 @@ addpath([pwd '/MFSR/Helper']);
 % Image Registration
 addpath([pwd '/MFSR/ImageRegistration/LKOFlow']);
 % Super Resolution
+addpath([pwd '/MFSR/SuperResolution/SplineInterpolation']);
+addpath([pwd '/MFSR/SuperResolution/Robust']);
 addpath([pwd '/MFSR/SuperResolution/FastRobust']);
 
 % Choose default command line output for MFSR
@@ -219,8 +221,19 @@ function cmdSR_Callback(hObject, eventdata, handles)
 
 handles.prevHR = handles.HR;
 
-% Set the Super Resolution algorithm
-handles.HR=FastRobustSR(LR(3:end-2,3:end-2,:), D, resFactor, Hpsf, props);
+% Check the selected super reolution algorithm 
+switch get(handles.gbSRType, 'SelectedObject')
+  
+  case handles.rbSpline
+    handles.HR=SplineSRInterp(LR, resFactor, Hpsf, props);
+    
+  case handles.rbRobust
+    handles.HR=RobustSR(LR(3:end-2,3:end-2,:), D, handles.HR, resFactor, Hpsf, props);
+
+  case handles.rbFast
+    handles.HR=FastRobustSR(LR(3:end-2,3:end-2,:), D, resFactor, Hpsf, props);
+    
+end
 
 % Show high resolution image in display area
 DisplayHRImage(hObject, handles);
