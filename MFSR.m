@@ -1,3 +1,5 @@
+%% PROGRAM INIT
+
 function varargout = MFSR(varargin)
 % MFSR M-file for MFSR.fig
 %      MFSR, by itself, creates a new MFSR or raises the existing
@@ -44,6 +46,10 @@ end
 % End initialization code - DO NOT EDIT
 
 
+
+
+%% PROGRAM SETUP
+
 % --- Executes just before MFSR is made visible.
 function MFSR_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -79,6 +85,17 @@ guidata(hObject, handles);
 % uiwait(handles.figure1);
 
 
+% --- Outputs from this function are returned to the command line.
+function varargout = MFSR_OutputFcn(hObject, eventdata, handles)
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
 % Setup axes as display area for images
 function setupAxes(axes)
 % enable given axis
@@ -93,80 +110,9 @@ xticklabels(axes,{});
 yticklabels(axes,{});
 
 
-% --- Outputs from this function are returned to the command line.
-function varargout = MFSR_OutputFcn(hObject, eventdata, handles)
-% varargout  cell array for returning output args (see VARARGOUT);
-% hObject    handle to figure
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Get default command line output from handles structure
-varargout{1} = handles.output;
 
 
-% --- Executes on button press in cmdLoad.
-function cmdLoad_Callback(hObject, eventdata, handles)
-% hObject    handle to cmdLoad (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Open dialog to retreive the filename
-[FileName,PathName] = uigetfile('*.avi','Select the movie AVI file');
-
-% Check if file exists
-if FileName ~= 0
-
-  % Load video file
-  handles.LR=LoadVideo([PathName FileName]);
-  handles.LRDisplayI = 1;
-
-  % Set button handles
-  set(handles.cmdRegister, 'enable', 'on');
-  set(handles.cmdSR, 'enable', 'off');
-  set(handles.cmdClear, 'enable', 'off');
-  set(handles.cmdSave, 'enable', 'off');
-  set(handles.cmdSaveLR, 'enable', 'on');
-
-  % Update low resolution display area
-  UpdateLRDisplay(hObject, handles)
-
-end
-
-
-% Function to handle scan button input
-function LRScanButtonEnable(hObject, handles)
-
-if handles.LRDisplayI == 1
-  set(handles.cmdPrev, 'enable', 'off');
-else
-  set(handles.cmdPrev, 'enable', 'on');
-end
-if handles.LRDisplayI == size(handles.LR, 3)
-  set(handles.cmdNext, 'enable', 'off');
-else
-  set(handles.cmdNext, 'enable', 'on');
-end
-
-% Update handles structure
-guidata(hObject, handles);
-
-
-% Function to update low resolution display area
-function UpdateLRDisplay(hObject, handles)
-
-% set image content to axes
-axes(handles.axesLR);
-imagesc(handles.LR(:,:,handles.LRDisplayI));
-colormap('gray');
-
-% disable axes description
-axis(handles.axesLR,'off');
-
-% set image count
-set(handles.lblLRImg, 'String', sprintf('Low Resolution Image %u of %u', handles.LRDisplayI, size(handles.LR,3)));
-
-% Update scan buttons
-LRScanButtonEnable(hObject, handles)
-
+%% TOP BUTTONS (PREV, NEXT, CLEAR)
 
 % --- Executes on button press in cmdNext.
 function cmdNext_Callback(hObject, eventdata, handles)
@@ -191,18 +137,6 @@ handles.LRDisplayI = handles.LRDisplayI - 1;
 UpdateLRDisplay(hObject, handles)
 
 
-% --- Executes on button press in cmdSave.
-function cmdSave_Callback(hObject, eventdata, handles)
-% hObject    handle to cmdSave (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-[FileName,PathName] = uiputfile('*.jpg','Save image file');
-
-if FileName ~= 0
-  imwrite(uint8(handles.HR), [PathName FileName]);
-end
-
-
 % --- Executes on button press in cmdClear.
 function cmdClear_Callback(hObject, eventdata, handles)
 % hObject    handle to cmdClear (see GCBO)
@@ -219,72 +153,93 @@ set(handles.gbSRType, 'SelectedObject', handles.rbFast);
 % Update handles structure
 guidata(hObject, handles);
 
-% --- Executes on button press in cmdRegister.
-function cmdRegister_Callback(hObject, eventdata, handles)
-% hObject    handle to cmdRegister (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Register the image sequence to base image (frame 1)
 
-% Check the selected registration method 
-switch get(handles.gbRegType, 'SelectedObject')
-  
-  case handles.rbRegMatlab
-    %handles.D=RegisterImage();
-    fprintf('Matlab Image Registration not implemented yet\n');
-    
-  case handles.rbRegTrans
-    handles.D=RegisterImageSeq(handles.LR);
-    
-  case handles.rbRegAffine
-    handles.D=RegisterImageSeqAffine(handles.LR);
-    
+% Function to handle scan button input
+function LRScanButtonEnable(hObject, handles)
+
+if handles.LRDisplayI == 1
+  set(handles.cmdPrev, 'enable', 'off');
+else
+  set(handles.cmdPrev, 'enable', 'on');
 end
-
-set(handles.cmdSR, 'enable', 'on');
-set(handles.cmdRegister, 'enable', 'on');
+if handles.LRDisplayI == size(handles.LR, 3)
+  set(handles.cmdNext, 'enable', 'off');
+else
+  set(handles.cmdNext, 'enable', 'on');
+end
 
 % Update handles structure
 guidata(hObject, handles);
 
 
-% --- Executes on button press in cmdSR.
-function cmdSR_Callback(hObject, eventdata, handles)
-% hObject    handle to cmdSR (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-[props, resFactor, D, LR, Hpsf] = CollectParms(hObject, handles);
 
-handles.prevHR = handles.HR;
 
-% Check the selected super reolution algorithm 
-switch get(handles.gbSRType, 'SelectedObject')
-  
-  case handles.rbSpline
-    handles.HR=SplineSRInterp(LR, resFactor, Hpsf, props);
-    
-  case handles.rbKernel
-    %handles.HR=AdaptiveKernel();
-    fprintf('Adaptive Kernel Regression not implemented yet\n');
-    
-  case handles.rbRobust
-    handles.HR=RobustSR(LR(3:end-2,3:end-2,:), D, handles.HR, resFactor, Hpsf, props);
+%% IMAGE DISPLAY AREAS
 
-  case handles.rbFast
-    handles.HR=FastRobustSR(LR(3:end-2,3:end-2,:), D, resFactor, Hpsf, props);
-    
-end
+% Function to update low resolution display area
+function UpdateLRDisplay(hObject, handles)
 
-% Show high resolution image in display area
-DisplayHRImage(hObject, handles);
+% set image content to axes
+axes(handles.axesLR);
+imagesc(handles.LR(:,:,handles.LRDisplayI));
+colormap('gray');
 
-% Set button handles
-set(handles.cmdClear, 'enable', 'on');
-set(handles.cmdSave, 'enable', 'on');
+% disable axes description
+axis(handles.axesLR,'off');
+
+% set image count
+set(handles.lblLRImg, 'String', sprintf('Low Resolution Image %u of %u', handles.LRDisplayI, size(handles.LR,3)));
+
+% Update scan buttons
+LRScanButtonEnable(hObject, handles)
+
+
+% Function to show high resolution image in display area
+function DisplayHRImage(hObject, handles)
+
+% set image content to axes
+axes(handles.axesHR);
+imagesc(handles.HR);
+colormap('gray');
+
+% disable axis description
+axis(handles.axesHR,'off');
 
 % Update handles structure
 guidata(hObject, handles);
 
+
+
+
+%% EXPORT BUTTONS
+
+% --- Executes on button press in cmdSaveLR.
+function cmdSaveLR_Callback(hObject, eventdata, handles)
+% hObject    handle to cmdSaveLR (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[FileName,PathName] = uiputfile('*.jpg','Save image file');
+
+if FileName ~= 0
+  imwrite(uint8(handles.LR(:,:,handles.LRDisplayI)), [PathName FileName]);
+end
+
+
+% --- Executes on button press in cmdSave.
+function cmdSave_Callback(hObject, eventdata, handles)
+% hObject    handle to cmdSave (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[FileName,PathName] = uiputfile('*.jpg','Save image file');
+
+if FileName ~= 0
+  imwrite(uint8(handles.HR), [PathName FileName]);
+end
+
+
+
+
+%% PARAMETER HANDLING
 
 % Function to set params and get params from gui
 function [props, resFactor, D, LR, Hpsf] = CollectParms(hObject, handles)
@@ -370,33 +325,35 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% Function to show high resolution image in display area
-function DisplayHRImage(hObject, handles)
-
-% set image content to axes
-axes(handles.axesHR);
-imagesc(handles.HR);
-colormap('gray');
-
-% disable axis description
-axis(handles.axesHR,'off');
-
-% Update handles structure
-guidata(hObject, handles);
 
 
-% --- Executes on button press in cmdSaveLR.
-function cmdSaveLR_Callback(hObject, eventdata, handles)
-% hObject    handle to cmdSaveLR (see GCBO)
+%% RADIO BUTTON HANDLING
+
+% --- Executes on button press in rbRegMatlab.
+function rbRegMatlab_Callback(hObject, eventdata, handles)
+% hObject    handle to rbRegMatlab (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[FileName,PathName] = uiputfile('*.jpg','Save image file');
+% Hint: get(hObject,'Value') returns toggle state of rbRegMatlab
 
-if FileName ~= 0
 
-  imwrite(uint8(handles.LR(:,:,handles.LRDisplayI)), [PathName FileName]);
-end
+% --- Executes on button press in rbRobust.
+function rbRobust_Callback(hObject, eventdata, handles)
+% hObject    handle to rbRobust (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbRobust
+
+
+% --- Executes on button press in rbRegAffine.
+function rbRegAffine_Callback(hObject, eventdata, handles)
+% hObject    handle to rbRegAffine (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbRegAffine
 
 
 % --- Executes on button press in rbSpline.
@@ -435,28 +392,100 @@ function rgRegTrans_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of rgRegTrans
 
 
-% --- Executes on button press in rbRegAffine.
-function rbRegAffine_Callback(hObject, eventdata, handles)
-% hObject    handle to rbRegAffine (see GCBO)
+
+
+%% BOTTOM BUTTONS (LOAD, REGISTER, SR)
+
+% --- Executes on button press in cmdLoad.
+function cmdLoad_Callback(hObject, eventdata, handles)
+% hObject    handle to cmdLoad (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+% Open dialog to retreive the filename
+[FileName,PathName] = uigetfile('*.avi','Select the movie AVI file');
 
-% Hint: get(hObject,'Value') returns toggle state of rbRegAffine
+% Check if file exists
+if FileName ~= 0
+
+  % Load video file
+  handles.LR=LoadVideo([PathName FileName]);
+  handles.LRDisplayI = 1;
+
+  % Set button handles
+  set(handles.cmdRegister, 'enable', 'on');
+  set(handles.cmdSR, 'enable', 'off');
+  set(handles.cmdClear, 'enable', 'off');
+  set(handles.cmdSave, 'enable', 'off');
+  set(handles.cmdSaveLR, 'enable', 'on');
+
+  % Update low resolution display area
+  UpdateLRDisplay(hObject, handles)
+
+end
 
 
-% --- Executes on button press in rbRegMatlab.
-function rbRegMatlab_Callback(hObject, eventdata, handles)
-% hObject    handle to rbRegMatlab (see GCBO)
+% --- Executes on button press in cmdRegister.
+function cmdRegister_Callback(hObject, eventdata, handles)
+% hObject    handle to cmdRegister (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+% Register the image sequence to base image (frame 1)
 
-% Hint: get(hObject,'Value') returns toggle state of rbRegMatlab
+% Check the selected registration method 
+switch get(handles.gbRegType, 'SelectedObject')
+  
+  case handles.rbRegMatlab
+    %handles.D=RegisterImage();
+    fprintf('Matlab Image Registration not implemented yet\n');
+    
+  case handles.rbRegTrans
+    handles.D=RegisterImageSeq(handles.LR);
+    
+  case handles.rbRegAffine
+    handles.D=RegisterImageSeqAffine(handles.LR);
+    
+end
+
+set(handles.cmdSR, 'enable', 'on');
+set(handles.cmdRegister, 'enable', 'on');
+
+% Update handles structure
+guidata(hObject, handles);
 
 
-% --- Executes on button press in rbRobust.
-function rbRobust_Callback(hObject, eventdata, handles)
-% hObject    handle to rbRobust (see GCBO)
+% --- Executes on button press in cmdSR.
+function cmdSR_Callback(hObject, eventdata, handles)
+% hObject    handle to cmdSR (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[props, resFactor, D, LR, Hpsf] = CollectParms(hObject, handles);
 
-% Hint: get(hObject,'Value') returns toggle state of rbRobust
+handles.prevHR = handles.HR;
+
+% Check the selected super reolution algorithm 
+switch get(handles.gbSRType, 'SelectedObject')
+  
+  case handles.rbSpline
+    handles.HR=SplineSRInterp(LR, resFactor, Hpsf, props);
+    
+  case handles.rbKernel
+    %handles.HR=AdaptiveKernel();
+    fprintf('Adaptive Kernel Regression not implemented yet\n');
+    
+  case handles.rbRobust
+    handles.HR=RobustSR(LR(3:end-2,3:end-2,:), D, handles.HR, resFactor, Hpsf, props);
+
+  case handles.rbFast
+    handles.HR=FastRobustSR(LR(3:end-2,3:end-2,:), D, resFactor, Hpsf, props);
+    
+end
+
+% Show high resolution image in display area
+DisplayHRImage(hObject, handles);
+
+% Set button handles
+set(handles.cmdClear, 'enable', 'on');
+set(handles.cmdSave, 'enable', 'on');
+
+% Update handles structure
+guidata(hObject, handles);
