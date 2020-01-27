@@ -20,13 +20,15 @@ function [Ht, G]=ComputeLKFlowParms(img)
 Hdy = fspecial('sobel');
 Hdx = Hdy';
 
+% Apply filters Hdx and Hdy on img
 Ix=imfilter(img, Hdx);
 Iy=imfilter(img, Hdy);
 
+% Cut out surrounding borders
 Ix=Ix(2:end-1,2:end-1);
 Iy=Iy(2:end-1,2:end-1);
 
-% Compute G
+% Compute G (quadratic filter matrix) with derivations of x and y
 H = [Ix(:) Iy(:)];
 Ht=H';
 G=Ht*H;

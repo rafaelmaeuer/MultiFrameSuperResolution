@@ -16,7 +16,7 @@ function G=FastGradientBackProject(Xn, Z, A, Hpsf)
 % Blur the current HR estimate
 Zn = imfilter(Xn, Hpsf, 'symmetric');
 
-% Deblur the normalized sign of Xdiff
+% Deblur the normalized signum of Xdiff
 Gsign = sign(A.*(Zn-Z));
 
 % Unblur the backprojected image

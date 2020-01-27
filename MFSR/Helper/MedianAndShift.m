@@ -21,9 +21,15 @@
 % Inputs:
 %
 % LR - The sequence of low resolution images
-% D  - The displacement vector for each frame
+% D - The displacement vector for each frame
 % HRsize - The size of the HR image
 % Dres - The resolution scale factor.
+%
+% Outputs:
+%
+% Z - The original blurred estimate of the HR image
+% A - Normilzation factor for each pixel
+
 function [Z,A]=MedianAndShift(LR, D, HRsize, Dres)
 
 % Allocate high resolution image
@@ -37,6 +43,7 @@ S = zeros(Dres);
 for x=Dres:2*Dres-1
   for y=Dres:2*Dres-1
     
+    % Find displacement values
     I = D(:,1)==x & D(:,2)==y;
     len = length(find(I==true));
     
@@ -47,6 +54,7 @@ for x=Dres:2*Dres-1
       % Indicate data exists for this shift
       S(x-Dres+1, y-Dres+1)=1;
 
+      % Fill Matrices Z and A by calculating median
       Z(y:Dres:size(Z, 1),x:Dres:size(Z, 2))=median(LR(:,:,I), 3);
       A(y:Dres:size(Z, 1),x:Dres:size(Z, 2))=len;
     end

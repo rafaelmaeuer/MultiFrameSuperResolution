@@ -18,7 +18,7 @@ function d=IterativeLKOpticalFlow(img1, img2, roi, dInit)
 K=10; % Number of iterations
 STOP_THR = 0.01; % Stop if accuracy is better than 0.01 pixel
 
-% Copy inflated region of interest our of image (we need border for
+% Copy inflated region of interest of our image (we need border for
 % derivative operation)
 img1 = img1(roi(1)-1:roi(3)+1,roi(2)-1:roi(4)+1);
 
@@ -40,7 +40,7 @@ while k<K && norm(dc)>STOP_THR
   % temporal difference image
   It=img1-ResampleImg(img2, roi, d);
 
-  % Find indexes which are not out of fov
+  % Find indices which are not out of (fov) roi?
   I = ~isnan(It(:));
   
   % Compute right side of optical flow equation: Gd=b
@@ -55,5 +55,3 @@ while k<K && norm(dc)>STOP_THR
   k=k+1;
 
 end
-
-dummy=1;
