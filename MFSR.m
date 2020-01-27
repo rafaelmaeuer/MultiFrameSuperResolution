@@ -77,7 +77,7 @@ setupAxes(handles.axesLR);
 setupAxes(handles.axesHR);
 
 % Setup Radio Buttons
-setupRadios(handles);
+%setupRadios(handles);
 
 handles.prevHR = [];
 handles.HR = [];
@@ -250,7 +250,7 @@ end
 %% PARAMETER HANDLING
 
 % Function to set params and get params from gui
-function [props, resFactor, D, LR, Hpsf] = CollectParms(hObject, handles)
+function [props, resFactor, Hpsf] = CollectParms(hObject, handles)
 
 try
 
@@ -275,23 +275,28 @@ try
   % stop criterion (max numbers of iterations in  steepest descent optimization)
   props.maxIter = str2double(get(handles.txtIterNum, 'String'));
 
-  % Round translation to nearest neighbor
-  D=round(handles.D.*resFactor);
-
-  % Shift all images so D is bounded from 0-resFactor
-  Dr=floor(D/resFactor);
-  D=mod(D,resFactor)+resFactor;
-
-  LR = handles.LR;
-  [X,Y]=meshgrid(1:size(LR, 2), 1:size(LR, 1));
-
-  for i=1:size(LR, 3)
-    LR(:,:,i)=interp2(X+Dr(i,1), Y+Dr(i,2), LR(:,:,i), X, Y, '*nearest');
-  end
-
 catch
   err = lasterror;
   errordlg(err.message,'Parsing error');
+end
+
+
+function [LR, D]=imageTransform(handles, resFactor)
+
+% Round translation to nearest neighbor
+D=round(handles.D.*resFactor);
+
+% Shift all images so D is bounded from 0-resFactor
+Dr=floor(D/resFactor);
+D=mod(D,resFactor)+resFactor;
+
+% Load LR image sequence to local array
+LR = handles.LR;
+[X,Y]=meshgrid(1:size(LR, 2), 1:size(LR, 1));
+
+% Iterate through all frames
+for i=1:size(LR, 3)
+    LR(:,:,i)=interp2(X+Dr(i,1), Y+Dr(i,2), LR(:,:,i), X, Y, '*nearest');
 end
 
 
@@ -472,7 +477,8 @@ function cmdSR_Callback(hObject, eventdata, handles)
 % hObject    handle to cmdSR (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[props, resFactor, D, LR, Hpsf] = CollectParms(hObject, handles);
+[props, resFactor, Hpsf] = CollectParms(hObject, handles);
+[LR, D] = imageTransform(handles, resFactor);
 
 handles.prevHR = handles.HR;
 
