@@ -24,7 +24,7 @@ function varargout = MFSR(varargin)
 
 % Edit the above text to modify the response to help MFSR
 
-% Last Modified by GUIDE v2.5 26-Jan-2020 14:18:34
+% Last Modified by GUIDE v2.5 26-Jan-2020 20:41:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -76,6 +76,9 @@ handles.output = hObject;
 setupAxes(handles.axesLR);
 setupAxes(handles.axesHR);
 
+% Setup Radio Buttons
+setupRadios(handles);
+
 handles.prevHR = [];
 handles.HR = [];
 
@@ -109,6 +112,12 @@ set(axes,'ytick',[])
 % remove labels on axis x and y
 xticklabels(axes,{});
 yticklabels(axes,{});
+
+
+% Setup initial radio button positions
+function setupRadios(handles)
+set(handles.gbRegType, 'SelectedObject', handles.rbRegMatlab);
+set(handles.gbSRType, 'SelectedObject', handles.rbKernel);
 
 
 
@@ -148,8 +157,6 @@ setupAxes(handles.axesHR);
 
 set(handles.cmdClear, 'enable', 'off');
 set(handles.cmdSave, 'enable', 'off');
-
-set(handles.gbSRType, 'SelectedObject', handles.rbFast);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -472,11 +479,11 @@ handles.prevHR = handles.HR;
 % Check the selected super reolution algorithm 
 switch get(handles.gbSRType, 'SelectedObject')
   
-  case handles.rbSpline
-    handles.HR=SplineSRInterp(LR, resFactor, Hpsf, props);
-    
   case handles.rbKernel
     handles.HR=AdaptiveKernel(LR);
+    
+  case handles.rbSpline
+    handles.HR=SplineSRInterp(LR, resFactor, Hpsf, props);
     
   case handles.rbRobust
     handles.HR=RobustSR(LR(3:end-2,3:end-2,:), D, handles.HR, resFactor, Hpsf, props);
