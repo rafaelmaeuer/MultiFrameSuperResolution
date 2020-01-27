@@ -283,6 +283,21 @@ end
 
 function [LR, D]=imageTransform(handles, resFactor)
 
+LR = handles.LR;
+
+if (get(handles.gbRegType, 'SelectedObject') == handles.rbRegMatlab)
+    [optimizer, metric] = imregconfig('monomodal');
+    
+    baseFrame = LR(:,:,1);
+    D=zeros(size(LR,3),2);
+
+    for i=2:size(LR, 3)
+        d = imregtform(LR(:,:,i), baseFrame, 'affine', optimizer, metric);
+        handles.D(i,:)=d.T(3,1:2);
+        LR(:,:,i)= imregister(LR(:,:,i), baseFrame, 'affine', optimizer, metric);
+    end
+end
+
 % Round translation to nearest neighbor
 D=round(handles.D.*resFactor);
 
@@ -290,14 +305,17 @@ D=round(handles.D.*resFactor);
 Dr=floor(D/resFactor);
 D=mod(D,resFactor)+resFactor;
 
-% Load LR image sequence to local array
-LR = handles.LR;
+% Load LR image sequence to meshgrid
+%LR = handles.LR;
 [X,Y]=meshgrid(1:size(LR, 2), 1:size(LR, 1));
 
 % Iterate through all frames
-for i=1:size(LR, 3)
-    LR(:,:,i)=interp2(X+Dr(i,1), Y+Dr(i,2), LR(:,:,i), X, Y, '*nearest');
+if (~(get(handles.gbRegType, 'SelectedObject') == handles.rbRegMatlab))
+    for i=1:size(LR, 3)
+        LR(:,:,i)=interp2(X+Dr(i,1), Y+Dr(i,2), LR(:,:,i), X, Y, '*nearest');
+    end
 end
+
 
 
 function txtResFactor_Callback(hObject, eventdata, handles)
@@ -454,8 +472,10 @@ function cmdRegister_Callback(hObject, eventdata, handles)
 switch get(handles.gbRegType, 'SelectedObject')
   
   case handles.rbRegMatlab
-    %handles.D=RegisterImage();
+    %[LR, D]=imageTransform(handles, 2);
+    %handles.D = D;
     fprintf('Matlab Image Registration not implemented yet\n');
+
     
   case handles.rbRegTrans
     handles.D=RegisterImageSeq(handles.LR);
@@ -481,6 +501,7 @@ function cmdSR_Callback(hObject, eventdata, handles)
 [LR, D] = imageTransform(handles, resFactor);
 
 handles.prevHR = handles.HR;
+%handles.D = D;
 
 % Check the selected super reolution algorithm 
 switch get(handles.gbSRType, 'SelectedObject')
