@@ -256,10 +256,16 @@ try
   Hpsf = fspecial('gaussian', [psfSize psfSize], psfSig);
 
   % Parameter for image registration
-  props.alpha = 0.7;
-  props.beta = 1;
-  props.lambda = 0.04;
-  props.P = 2;
+  props.alpha = 0.7;    % Spatial correction Factor for regularization term
+                        % of the SR optimization
+  props.beta = 1;       % Step Size of the steepest descent optimization
+  props.lambda = 0.04;  % Regularization Parameter weighting the 
+                        % regularization cost-function
+                        
+  props.P = 4;          % Number of shifts to calculate the regularization
+                        % cost-function
+                        
+  % stop criterion (max numbers of iterations in  steepest descent optimization)
   props.maxIter = str2double(get(handles.txtIterNum, 'String'));
 
   % Round translation to nearest neighbor
