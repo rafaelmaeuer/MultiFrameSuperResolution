@@ -12,6 +12,7 @@
 %
 % Outpus:
 % The backprojection of the sign of the residual error
+% TODO: rename Fmot to D (project uniformity?)
 function G=GradientBackProject(Xn, LR, Fmot, Hpsf, Dres) 
 
 % Note that shift and blur are comutative, so to improve runtime, we first
@@ -24,7 +25,15 @@ HRsd = zeros(size(LR));
 for k=1:size(LR,3)
 
   % Shift and decimate HR image for each frame k
-  HRsd(:,:,k)=Zn(Fmot(k,2):Dres:(size(LR,1)-1)*Dres+Fmot(k,2),Fmot(k,1):Dres:(size(LR,2)-1)*Dres+Fmot(k,1));
+  % TODO: find meaningful variable names
+  temp1=(Fmot(k,2):Dres:(size(LR,1)-1));
+  temp2=Dres+Fmot(k,2);
+  temp3=(Fmot(k,1):Dres:(size(LR,2)-1));
+  temp4=Dres+Fmot(k,1);
+  temp5=Zn(temp1*temp2,temp3*temp4);
+  HRsd(:,:,k)=temp5;
+  % TODO: Find cause for Error when running Robust Algorithm first
+  %HRsd(:,:,k)=Zn(Fmot(k,2):Dres:(size(LR,1)-1)*Dres+Fmot(k,2),Fmot(k,1):Dres:(size(LR,2)-1)*Dres+Fmot(k,1));
   
 end
 
@@ -37,6 +46,7 @@ HRsd = zeros([size(Xn) size(LR,3)]);
 for k=1:size(LR,3)
 
   % Upsample and shift LR sign image for each frame k
+  % TODO: split variables and give it meaningful names?
   HRsd(Fmot(k,2):Dres:(size(LR,1)-1)*Dres+Fmot(k,2),Fmot(k,1):Dres:(size(LR,2)-1)*Dres+Fmot(k,1),k)=Gsign(:,:,k);
   
 end

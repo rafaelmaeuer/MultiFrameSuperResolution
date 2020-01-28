@@ -285,17 +285,27 @@ function [LR, D]=imageTransform(handles, resFactor)
 
 LR = handles.LR;
 
+% TODO: Optimize code (build correct switch state?)
 if (get(handles.gbRegType, 'SelectedObject') == handles.rbRegMatlab)
+    
+    % Init matlab image registration
     [optimizer, metric] = imregconfig('monomodal');
     
+    % Store base frame and init transformation vector
     baseFrame = LR(:,:,1);
     D=zeros(size(LR,3),2);
 
+    % Iterate through all frames
     for i=2:size(LR, 3)
+        % Get transformation vector from matlab image registration
         d = imregtform(LR(:,:,i), baseFrame, 'affine', optimizer, metric);
-        handles.D(i,:)=d.T(3,1:2);
+        D(i,:)=d.T(3,1:2);
+        
+        % Perform matlab image registration (transformation)
         LR(:,:,i)= imregister(LR(:,:,i), baseFrame, 'affine', optimizer, metric);
     end
+    % TODO: optimize handling of D, better return D and set handles.D on other point?
+    handles.D = D;
 end
 
 % Round translation to nearest neighbor
@@ -306,12 +316,13 @@ Dr=floor(D/resFactor);
 D=mod(D,resFactor)+resFactor;
 
 % Load LR image sequence to meshgrid
-%LR = handles.LR;
 [X,Y]=meshgrid(1:size(LR, 2), 1:size(LR, 1));
 
 % Iterate through all frames
+% TODO: Optimize code (iterate through frames once, set LR by switch or if/else)
 if (~(get(handles.gbRegType, 'SelectedObject') == handles.rbRegMatlab))
     for i=1:size(LR, 3)
+        % Perform image transformation (LKOFlow)
         LR(:,:,i)=interp2(X+Dr(i,1), Y+Dr(i,2), LR(:,:,i), X, Y, '*nearest');
     end
 end
@@ -472,9 +483,10 @@ function cmdRegister_Callback(hObject, eventdata, handles)
 switch get(handles.gbRegType, 'SelectedObject')
   
   case handles.rbRegMatlab
+    %TODO: perform registration here?
     %[LR, D]=imageTransform(handles, 2);
     %handles.D = D;
-    fprintf('Matlab Image Registration not implemented yet\n');
+    fprintf('Nothing happens here right now\n');
 
     
   case handles.rbRegTrans
@@ -501,7 +513,6 @@ function cmdSR_Callback(hObject, eventdata, handles)
 [LR, D] = imageTransform(handles, resFactor);
 
 handles.prevHR = handles.HR;
-%handles.D = D;
 
 % Check the selected super reolution algorithm 
 switch get(handles.gbSRType, 'SelectedObject')
