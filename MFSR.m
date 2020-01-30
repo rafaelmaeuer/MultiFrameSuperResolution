@@ -450,7 +450,7 @@ function cmdLoad_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % Open dialog to retreive the filename
-[FileName,PathName] = uigetfile('*.avi','Select the movie AVI file');
+[FileName,PathName] = uigetfile('*.avi;*.mov;*.mp4;.m4v;','Select the movie file (avi, mov, mp4, m4v)');
 
 % Check if file exists
 if FileName ~= 0
