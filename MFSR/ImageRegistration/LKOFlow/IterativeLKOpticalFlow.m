@@ -13,11 +13,16 @@
 %
 % Outpus:
 % d - The computed displacement
-function d=IterativeLKOpticalFlow(img1, img2, roi, dInit)
+% k - the number of iterations
+% e - the remaining error
+
+function [d,iter,err] = IterativeLKOpticalFlow(img1, img2, roi, dInit)
 
 K=10; % Number of iterations
 STOP_THR = 0.01; % Stop if accuracy is better than 0.01 pixel
 
+err = 0.0;
+iter = 0;
 % Copy inflated region of interest of our image (we need border for
 % derivative operation)
 img1 = img1(roi(1)-1:roi(3)+1,roi(2)-1:roi(4)+1);
@@ -52,6 +57,10 @@ while k<K && norm(dc)>STOP_THR
   % Add current displacement to d
   d=d+dc;
   
+  % calculate the remaining error
+  err = norm(dc);
+  iter = k;
+  
   k=k+1;
-
+  
 end

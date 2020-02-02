@@ -13,7 +13,10 @@
 %
 % Outpus:
 % d - The computed displacement
-function  d=PyramidalLKOpticalFlow(img1, img2, roi)
+% k - The number of iterations
+% e - The remaining error
+
+function  [d, iter, err] = PyramidalLKOpticalFlow(img1, img2, roi)
 
 img1=double(img1);
 img2=double(img2);
@@ -54,7 +57,7 @@ for l=levels:-1:1
   br=min(tl+sz-1, size(pyramid1{l})-1);
   
   % Compute displacement at current level
-  d=IterativeLKOpticalFlow(pyramid1{l}, pyramid2{l}, [tl br], d);
+  [d, iter, err] = IterativeLKOpticalFlow(pyramid1{l}, pyramid2{l}, [tl br], d);
 
 end
 
