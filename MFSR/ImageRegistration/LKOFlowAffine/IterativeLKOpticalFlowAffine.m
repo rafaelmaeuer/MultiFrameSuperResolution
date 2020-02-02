@@ -13,7 +13,9 @@
 %
 % Outpus:
 % d - The computed affine transformation parameters
-function d=IterativeLKOpticalFlowAffine(img1, img2, roi, dInit)
+% k - number of iterations
+% e - the remaining error
+function [d,iter,err] = IterativeLKOpticalFlowAffine(img1, img2, roi, dInit)
 
 K=10; % Number of iterations
 STOP_THR = 0.01; % Stop if accuracy is better than 0.01 pixel
@@ -52,6 +54,10 @@ while k<K && norm(dc)>STOP_THR
   % Add current displacement to d (This is actually concatinating the two
   % affine matrixes)
   d=d+reshape(dc, 2, 3)*(eye(3)+[d;0 0 0]);
+  
+  % calculate the remaining error
+  err = norm(dc);
+  iter = k;
   
   k=k+1;
 

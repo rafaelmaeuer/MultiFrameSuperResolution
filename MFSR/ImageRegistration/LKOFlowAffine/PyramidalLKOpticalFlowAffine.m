@@ -13,7 +13,8 @@
 %
 % Outpus:
 % d - The computed affine transformation parameters
-function  d=PyramidalLKOpticalFlowAffine(img1, img2, roi)
+
+function  [d,iter,err] = PyramidalLKOpticalFlowAffine(img1, img2, roi)
 
 img1=double(img1);
 img2=double(img2);
@@ -38,12 +39,13 @@ pyramid2 = GuassianPyramidAffine(img2, levels);
 % Set d to an empty affine displacement transformation
 d=zeros(2,3);
 
-% Start with initial translation 0 at lowest pyramid
+% Start with initial transformation 0 at lowest pyramid
 for l=levels:-1:1
 
-  fprintf('Computing optical flow at level %u\n', l);
+  %fprintf('Computing optical flow at level %u\n', l);
 
   % Transform displacement to current level
+  % ?????????
   d(:,3)=sum(d,2)+d(:,3);
 
   % Compute current location of ROI
@@ -57,6 +59,6 @@ for l=levels:-1:1
   br=min(tl+sz-1, size(pyramid1{l})-1);
   
   % Compute displacement at current level
-  d=IterativeLKOpticalFlowAffine(pyramid1{l}, pyramid2{l}, [tl br], d);
+  [d,iter,err] = IterativeLKOpticalFlowAffine(pyramid1{l}, pyramid2{l}, [tl br], d);
 
 end
