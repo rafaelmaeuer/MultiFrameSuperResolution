@@ -280,7 +280,10 @@ catch
   errordlg(err.message,'Parsing error');
 end
 
+%% Image Registration
 
+% Calculates the transformation matrix for image registration and applies
+% the transformation to the image stack
 function [LR, D]=imageTransform(handles, resFactor)
 
 LR = handles.LR;
