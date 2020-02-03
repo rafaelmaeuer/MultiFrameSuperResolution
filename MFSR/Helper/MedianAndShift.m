@@ -44,18 +44,24 @@ for x=Dres:2*Dres-1
   for y=Dres:2*Dres-1
     
     % Find displacement values
+    % I is a vector of length(number of frames) which contains boolean
+    % values. An entry of I is true, if the displacement matches the
+    % iteration indices.
     I = D(:,1)==x & D(:,2)==y;
+    
+    % returns the number of valid displacements
     len = length(find(I==true));
     
     % Handle only cases in which there is at least one LR at this
     % displacement
     if len>0
 
-      % Indicate data exists for this shift
+      % Indicate data exists for this shift by writing '1' at the
+      % corresponding pixel location in S
       S(x-Dres+1, y-Dres+1)=1;
 
       % Fill Matrices Z and A by calculating median
-      Z(y:Dres:size(Z, 1),x:Dres:size(Z, 2))=median(LR(:,:,I), 3);
+      Z(y:Dres:size(Z, 1),x:Dres:size(Z, 2))= median(LR(:,:,I), 3);
       A(y:Dres:size(Z, 1),x:Dres:size(Z, 2))=len;
     end
 
