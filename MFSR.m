@@ -77,7 +77,7 @@ setupAxes(handles.axesLR);
 setupAxes(handles.axesHR);
 
 % Setup Radio Buttons
-%setupRadios(handles);
+setupRadios(handles);
 
 handles.prevHR = [];
 handles.HR = [];
@@ -117,7 +117,7 @@ yticklabels(axes,{});
 % Setup initial radio button positions
 function setupRadios(handles)
 set(handles.gbRegType, 'SelectedObject', handles.rbRegMatlab);
-set(handles.gbSRType, 'SelectedObject', handles.rbKernel);
+set(handles.gbSRType, 'SelectedObject', handles.rbFast);
 
 
 
