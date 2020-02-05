@@ -1,0 +1,163 @@
+<deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
+  <configuration build-checksum="2893866838" file="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_new.prj" location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution" name="MFSR_new" preferred-package-location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_new\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+    <param.appname>MultiFrameSRTool</param.appname>
+    <param.icon />
+    <param.icons />
+    <param.version>1.1</param.version>
+    <param.authnamewatermark>Müllner, Mäuer, Schöttler, Kloos</param.authnamewatermark>
+    <param.email>den_michael.muellner@smail.th-koeln.de</param.email>
+    <param.company>TH Köln</param.company>
+    <param.summary>A Multiframe Super-Resolution Toolkit</param.summary>
+    <param.description>You can choose from multiple image registration and super-resolution algorithms to compute an image of higher resolution.
+Image registration methods: MATLAB image Registration, Lucas-Kanade gradient based algorithm for affine transformation ore solely translatory registration.
+Super-resolution methods: Adaptive Kernel Regression method by Islam et al. (not recommended), Cubic Spline Interpolation Method, Robust and Fast Robust Super Resolution algorithms proposed by Sina Farsiu et al.</param.description>
+    <param.screenshot />
+    <param.guid />
+    <param.installpath.string>\TH Köln\MultiFrameSRTool\</param.installpath.string>
+    <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
+    <param.logo />
+    <param.install.notes />
+    <param.target.install.notes />
+    <param.intermediate>${PROJECT_ROOT}\MFSR_new\for_testing</param.intermediate>
+    <param.files.only>${PROJECT_ROOT}\MFSR_new\for_redistribution_files_only</param.files.only>
+    <param.output>${PROJECT_ROOT}\MFSR_new\for_redistribution</param.output>
+    <param.logdir>${PROJECT_ROOT}\MFSR_new</param.logdir>
+    <param.enable.clean.build>false</param.enable.clean.build>
+    <param.user.defined.mcr.options />
+    <param.target.type>subtarget.standalone</param.target.type>
+    <param.support.packages />
+    <param.web.mcr>true</param.web.mcr>
+    <param.package.mcr>false</param.package.mcr>
+    <param.no.mcr>false</param.no.mcr>
+    <param.web.mcr.name>MyAppInstaller_web</param.web.mcr.name>
+    <param.package.mcr.name>MFSRToolPackage</param.package.mcr.name>
+    <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
+    <param.windows.command.prompt>true</param.windows.command.prompt>
+    <param.create.log>false</param.create.log>
+    <param.log.file />
+    <param.native.matlab>false</param.native.matlab>
+    <param.checkbox>false</param.checkbox>
+    <param.example />
+    <param.help.text>Syntax 
+	  -? 
+	 
+ Input Arguments 
+	 -?  print help on how to use the application 
+	 input arguments 
+ Description 
+ 	 You can choose from multiple image registration and super-resolution algorithms to compute an image of higher resolution.
+Image registration methods: MATLAB image Registration, Lucas-Kanade gradient based algorithm for affine transformation ore solely translatory registration.
+Super-resolution methods: Adaptive Kernel Regression method by Islam et al. (not recommended), Cubic Spline Interpolation Method, Robust and Fast Robust Super Resolution algorithms proposed by Sina Farsiu et al.</param.help.text>
+    <unset>
+      <param.icon />
+      <param.icons />
+      <param.screenshot />
+      <param.guid />
+      <param.installpath.string />
+      <param.installpath.combo />
+      <param.logo />
+      <param.install.notes />
+      <param.target.install.notes />
+      <param.intermediate />
+      <param.files.only />
+      <param.output />
+      <param.logdir />
+      <param.enable.clean.build />
+      <param.user.defined.mcr.options />
+      <param.target.type />
+      <param.support.packages />
+      <param.web.mcr />
+      <param.package.mcr />
+      <param.no.mcr />
+      <param.web.mcr.name />
+      <param.no.mcr.name />
+      <param.windows.command.prompt />
+      <param.create.log />
+      <param.log.file />
+      <param.native.matlab />
+      <param.checkbox />
+      <param.example />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\MFSR_new.mlapp</file>
+    </fileset.main>
+    <fileset.resources />
+    <fileset.package />
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}\MFSR\Helper\APP_buildIMG.m</file>
+      <file>${PROJECT_ROOT}\MFSR\Helper\GradientRegulization.m</file>
+      <file>${PROJECT_ROOT}\MFSR\Helper\LoadVideo.m</file>
+      <file>${PROJECT_ROOT}\MFSR\Helper\MedianAndShift.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlow\ComputeLKFlowParms.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlow\GaussianDownSample.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlow\GuassianPyramid.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlow\IterativeLKOpticalFlow.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlow\PyramidalLKOpticalFlow.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlow\ResampleImg.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlowAffine\ComputeLKFlowParmsAffine.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlowAffine\GaussianDownSampleAffine.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlowAffine\GuassianPyramidAffine.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlowAffine\IterativeLKOpticalFlowAffine.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlowAffine\PyramidalLKOpticalFlowAffine.m</file>
+      <file>${PROJECT_ROOT}\MFSR\ImageRegistration\LKOFlowAffine\ResampleImgAffine.m</file>
+      <file>${PROJECT_ROOT}\MFSR\SuperResolution\FastRobust\FastGradientBackProject.m</file>
+      <file>${PROJECT_ROOT}\MFSR\SuperResolution\Robust\GradientBackProject.m</file>
+    </fileset.depfun>
+    <build-deliverables>
+      <file location="${PROJECT_ROOT}\MFSR_new\for_testing" name="readme.txt" optional="true">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_new\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}\MFSR_new\for_testing" name="MultiFrameSRTool.exe" optional="false">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_new\for_testing\MultiFrameSRTool.exe</file>
+      <file location="${PROJECT_ROOT}\MFSR_new\for_testing" name="splash.png" optional="false">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_new\for_testing\splash.png</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2019b</root>
+      <toolboxes>
+        <toolbox name="matlabcoder" />
+        <toolbox name="gpucoder" />
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabhdlcoder" />
+        <toolbox name="neuralnetwork" />
+      </toolboxes>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <gpucoder>
+          <enabled>true</enabled>
+        </gpucoder>
+      </toolbox>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabhdlcoder>
+          <enabled>true</enabled>
+        </matlabhdlcoder>
+      </toolbox>
+      <toolbox>
+        <neuralnetwork>
+          <enabled>true</enabled>
+        </neuralnetwork>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

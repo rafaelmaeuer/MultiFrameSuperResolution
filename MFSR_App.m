@@ -536,6 +536,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
         function BTN_loadFileButtonPushed(app, event)
             filter = '*.avi;*.mov;*.mp4;.m4v;';
             [FileName,PathName] = uigetfile(filter,'Select the movie file (avi, mov, mp4, m4v)');
+            figure(app.UIFigure);
             
             if FileName ~= 0
                 % Load video file
@@ -597,6 +598,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
         % Button pushed function: BTN_saveLRFrame
         function BTN_saveLRFrameButtonPushed(app, event)
             [FileName,PathName] = uiputfile('*.jpg','Save image file');
+            figure(app.UIFigure);
             
             if FileName ~= 0
               imwrite(uint8(app.LRstack(:,:,app.frameCnt)), [PathName FileName]);
@@ -643,6 +645,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
         % Button pushed function: BTN_saveHRFrame
         function BTN_saveHRFrameButtonPushed(app, event)
             [FileName,PathName] = uiputfile('*.jpg','Save image file');
+            figure(app.UIFigure);
             
             if FileName ~= 0
               imwrite(uint8(app.HRimage), [PathName FileName]);
