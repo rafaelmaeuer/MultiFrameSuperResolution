@@ -1,8 +1,8 @@
-classdef MFSR_new_exported < matlab.apps.AppBase
+classdef MFSR_App < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        UIFigure                  matlab.ui.Figure
+        MFSRToolUIFigure          matlab.ui.Figure
         IMG_LR                    matlab.ui.control.Image
         IMG_HR                    matlab.ui.control.Image
         LABEL_heading_LRstack     matlab.ui.control.Label
@@ -519,15 +519,15 @@ classdef MFSR_new_exported < matlab.apps.AppBase
         % Code that executes after component creation
         function startupFcn(app)
             % Load all components
-            addpath([pwd '/MFSR/Helper']);
+            addpath([pwd '/Helper']);
             % Image Registration
-            addpath([pwd '/MFSR/ImageRegistration/LKOFlow']);
-            addpath([pwd '/MFSR/ImageRegistration/LKOFlowAffine']);
+            addpath([pwd '/ImageRegistration/LKOFlow']);
+            addpath([pwd '/ImageRegistration/LKOFlowAffine']);
             % Super Resolution
-            addpath([pwd '/MFSR/SuperResolution/SplineInterpolation']);
-            addpath([pwd '/MFSR/SuperResolution/AdaptiveKernel']);
-            addpath([pwd '/MFSR/SuperResolution/Robust']);
-            addpath([pwd '/MFSR/SuperResolution/FastRobust']);
+            addpath([pwd '/SuperResolution/SplineInterpolation']);
+            addpath([pwd '/SuperResolution/AdaptiveKernel']);
+            addpath([pwd '/SuperResolution/Robust']);
+            addpath([pwd '/SuperResolution/FastRobust']);
             
             app.imReg_flag = false;
         end
@@ -536,7 +536,8 @@ classdef MFSR_new_exported < matlab.apps.AppBase
         function BTN_loadFileButtonPushed(app, event)
             filter = '*.avi;*.mov;*.mp4;.m4v;';
             [FileName,PathName] = uigetfile(filter,'Select the movie file (avi, mov, mp4, m4v)');
-            figure(app.UIFigure);
+            drawnow;
+            figure(app.MFSRToolUIFigure);
             
             if FileName ~= 0
                 % Load video file
@@ -598,7 +599,8 @@ classdef MFSR_new_exported < matlab.apps.AppBase
         % Button pushed function: BTN_saveLRFrame
         function BTN_saveLRFrameButtonPushed(app, event)
             [FileName,PathName] = uiputfile('*.jpg','Save image file');
-            figure(app.UIFigure);
+            drawnow;
+            figure(app.MFSRToolUIFigure);
             
             if FileName ~= 0
               imwrite(uint8(app.LRstack(:,:,app.frameCnt)), [PathName FileName]);
@@ -645,7 +647,8 @@ classdef MFSR_new_exported < matlab.apps.AppBase
         % Button pushed function: BTN_saveHRFrame
         function BTN_saveHRFrameButtonPushed(app, event)
             [FileName,PathName] = uiputfile('*.jpg','Save image file');
-            figure(app.UIFigure);
+            drawnow;
+            figure(app.MFSRToolUIFigure);
             
             if FileName ~= 0
               imwrite(uint8(app.HRimage), [PathName FileName]);
@@ -672,22 +675,22 @@ classdef MFSR_new_exported < matlab.apps.AppBase
         % Create UIFigure and components
         function createComponents(app)
 
-            % Create UIFigure and hide until all components are created
-            app.UIFigure = uifigure('Visible', 'off');
-            app.UIFigure.Color = [0.149 0.149 0.149];
-            app.UIFigure.Position = [100 100 800 800];
-            app.UIFigure.Name = 'UI Figure';
+            % Create MFSRToolUIFigure and hide until all components are created
+            app.MFSRToolUIFigure = uifigure('Visible', 'off');
+            app.MFSRToolUIFigure.Color = [0.149 0.149 0.149];
+            app.MFSRToolUIFigure.Position = [100 100 800 800];
+            app.MFSRToolUIFigure.Name = 'MFSR Tool';
 
             % Create IMG_LR
-            app.IMG_LR = uiimage(app.UIFigure);
+            app.IMG_LR = uiimage(app.MFSRToolUIFigure);
             app.IMG_LR.Position = [30 400 350 350];
 
             % Create IMG_HR
-            app.IMG_HR = uiimage(app.UIFigure);
+            app.IMG_HR = uiimage(app.MFSRToolUIFigure);
             app.IMG_HR.Position = [420 400 350 350];
 
             % Create LABEL_heading_LRstack
-            app.LABEL_heading_LRstack = uilabel(app.UIFigure);
+            app.LABEL_heading_LRstack = uilabel(app.MFSRToolUIFigure);
             app.LABEL_heading_LRstack.FontSize = 20;
             app.LABEL_heading_LRstack.FontWeight = 'bold';
             app.LABEL_heading_LRstack.FontColor = [1 1 0];
@@ -695,7 +698,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.LABEL_heading_LRstack.Text = 'Low Resolution Stack';
 
             % Create LABEL_heading_HRstack
-            app.LABEL_heading_HRstack = uilabel(app.UIFigure);
+            app.LABEL_heading_HRstack = uilabel(app.MFSRToolUIFigure);
             app.LABEL_heading_HRstack.FontSize = 20;
             app.LABEL_heading_HRstack.FontWeight = 'bold';
             app.LABEL_heading_HRstack.FontColor = [1 1 0];
@@ -703,7 +706,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.LABEL_heading_HRstack.Text = 'Super Resolution Result';
 
             % Create PANEL_imInfo
-            app.PANEL_imInfo = uipanel(app.UIFigure);
+            app.PANEL_imInfo = uipanel(app.MFSRToolUIFigure);
             app.PANEL_imInfo.ForegroundColor = [1 1 0];
             app.PANEL_imInfo.Title = 'Low Res Image Information';
             app.PANEL_imInfo.BackgroundColor = [0 0 0];
@@ -796,7 +799,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.VAL_imInfo_imHeight.Text = '';
 
             % Create BTN_next
-            app.BTN_next = uibutton(app.UIFigure, 'push');
+            app.BTN_next = uibutton(app.MFSRToolUIFigure, 'push');
             app.BTN_next.ButtonPushedFcn = createCallbackFcn(app, @BTN_nextButtonPushed, true);
             app.BTN_next.BackgroundColor = [0 0 0];
             app.BTN_next.FontSize = 14;
@@ -807,7 +810,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.BTN_next.Text = '>>';
 
             % Create BTN_prev
-            app.BTN_prev = uibutton(app.UIFigure, 'push');
+            app.BTN_prev = uibutton(app.MFSRToolUIFigure, 'push');
             app.BTN_prev.ButtonPushedFcn = createCallbackFcn(app, @BTN_prevButtonPushed, true);
             app.BTN_prev.BackgroundColor = [0 0 0];
             app.BTN_prev.FontSize = 14;
@@ -818,7 +821,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.BTN_prev.Text = '<<';
 
             % Create BTN_loadFile
-            app.BTN_loadFile = uibutton(app.UIFigure, 'push');
+            app.BTN_loadFile = uibutton(app.MFSRToolUIFigure, 'push');
             app.BTN_loadFile.ButtonPushedFcn = createCallbackFcn(app, @BTN_loadFileButtonPushed, true);
             app.BTN_loadFile.BackgroundColor = [0 0 0];
             app.BTN_loadFile.FontSize = 14;
@@ -828,7 +831,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.BTN_loadFile.Text = 'Load Video';
 
             % Create PANEL_bench
-            app.PANEL_bench = uipanel(app.UIFigure);
+            app.PANEL_bench = uipanel(app.MFSRToolUIFigure);
             app.PANEL_bench.ForegroundColor = [1 1 0];
             app.PANEL_bench.Title = 'Benchmark';
             app.PANEL_bench.BackgroundColor = [0 0 0];
@@ -989,7 +992,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.VAL_SR_err.Text = '';
 
             % Create BTN_enhance
-            app.BTN_enhance = uibutton(app.UIFigure, 'push');
+            app.BTN_enhance = uibutton(app.MFSRToolUIFigure, 'push');
             app.BTN_enhance.ButtonPushedFcn = createCallbackFcn(app, @BTN_enhanceButtonPushed, true);
             app.BTN_enhance.BackgroundColor = [0 0 0];
             app.BTN_enhance.FontSize = 14;
@@ -1000,7 +1003,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.BTN_enhance.Text = 'ENHANCE';
 
             % Create RADIOGROUP_IR_Method
-            app.RADIOGROUP_IR_Method = uibuttongroup(app.UIFigure);
+            app.RADIOGROUP_IR_Method = uibuttongroup(app.MFSRToolUIFigure);
             app.RADIOGROUP_IR_Method.SelectionChangedFcn = createCallbackFcn(app, @RADIOGROUP_IR_MethodSelectionChanged, true);
             app.RADIOGROUP_IR_Method.ForegroundColor = [1 1 0];
             app.RADIOGROUP_IR_Method.Title = 'Registration Method';
@@ -1032,7 +1035,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.RADIO_IR_LKFlow.Position = [11 16 158 22];
 
             % Create RADIOGROUP_SR_Method
-            app.RADIOGROUP_SR_Method = uibuttongroup(app.UIFigure);
+            app.RADIOGROUP_SR_Method = uibuttongroup(app.MFSRToolUIFigure);
             app.RADIOGROUP_SR_Method.ForegroundColor = [1 1 0];
             app.RADIOGROUP_SR_Method.Title = 'Super Resolution Method';
             app.RADIOGROUP_SR_Method.BackgroundColor = [0 0 0];
@@ -1070,7 +1073,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.RADIO_SR_FastRobust.Position = [11 8 121 22];
 
             % Create BTN_reset
-            app.BTN_reset = uibutton(app.UIFigure, 'push');
+            app.BTN_reset = uibutton(app.MFSRToolUIFigure, 'push');
             app.BTN_reset.ButtonPushedFcn = createCallbackFcn(app, @BTN_resetButtonPushed, true);
             app.BTN_reset.BackgroundColor = [0 0 0];
             app.BTN_reset.FontSize = 14;
@@ -1080,7 +1083,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.BTN_reset.Text = 'Reset';
 
             % Create PANEL_SR_params
-            app.PANEL_SR_params = uipanel(app.UIFigure);
+            app.PANEL_SR_params = uipanel(app.MFSRToolUIFigure);
             app.PANEL_SR_params.ForegroundColor = [1 1 0];
             app.PANEL_SR_params.Title = 'Parameters';
             app.PANEL_SR_params.BackgroundColor = [0 0 0];
@@ -1125,7 +1128,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.PARAM_Iterations.Value = 20;
 
             % Create BTN_saveLRFrame
-            app.BTN_saveLRFrame = uibutton(app.UIFigure, 'push');
+            app.BTN_saveLRFrame = uibutton(app.MFSRToolUIFigure, 'push');
             app.BTN_saveLRFrame.ButtonPushedFcn = createCallbackFcn(app, @BTN_saveLRFrameButtonPushed, true);
             app.BTN_saveLRFrame.BackgroundColor = [0 0 0];
             app.BTN_saveLRFrame.FontSize = 14;
@@ -1136,7 +1139,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.BTN_saveLRFrame.Text = 'Save Frame';
 
             % Create BTN_saveHRFrame
-            app.BTN_saveHRFrame = uibutton(app.UIFigure, 'push');
+            app.BTN_saveHRFrame = uibutton(app.MFSRToolUIFigure, 'push');
             app.BTN_saveHRFrame.ButtonPushedFcn = createCallbackFcn(app, @BTN_saveHRFrameButtonPushed, true);
             app.BTN_saveHRFrame.BackgroundColor = [0 0 0];
             app.BTN_saveHRFrame.FontSize = 14;
@@ -1147,7 +1150,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.BTN_saveHRFrame.Text = 'Save Frame';
 
             % Create StatusPanel
-            app.StatusPanel = uipanel(app.UIFigure);
+            app.StatusPanel = uipanel(app.MFSRToolUIFigure);
             app.StatusPanel.ForegroundColor = [1 1 0];
             app.StatusPanel.BorderType = 'none';
             app.StatusPanel.Title = 'Status';
@@ -1240,7 +1243,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
             app.perc9.Text = '';
 
             % Show the figure after all components are created
-            app.UIFigure.Visible = 'on';
+            app.MFSRToolUIFigure.Visible = 'on';
         end
     end
 
@@ -1248,13 +1251,13 @@ classdef MFSR_new_exported < matlab.apps.AppBase
     methods (Access = public)
 
         % Construct app
-        function app = MFSR_new_exported
+        function app = MFSR_App
 
             % Create UIFigure and components
             createComponents(app)
 
             % Register the app with App Designer
-            registerApp(app, app.UIFigure)
+            registerApp(app, app.MFSRToolUIFigure)
 
             % Execute the startup function
             runStartupFcn(app, @startupFcn)
@@ -1268,7 +1271,7 @@ classdef MFSR_new_exported < matlab.apps.AppBase
         function delete(app)
 
             % Delete UIFigure when app is deleted
-            delete(app.UIFigure)
+            delete(app.MFSRToolUIFigure)
         end
     end
 end
