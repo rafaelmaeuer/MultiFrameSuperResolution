@@ -13,13 +13,13 @@ Choose from multiple Image-Registration methods and Super-Resolution algorithms.
 
 Image-Registration methods:
 - MATLAB Image Registration
-- Lucas-Kanade Optical Flow Translation
 - Lukas-Kanade Optical Flow Affine
+- Lucas-Kanade Optical Flow Motion
 
 Super-Resolution Algorithms:
 - Adaptive Kernel Regression
 - Cubic Spline Interpolation
-- Robust Super Resolution 
+- Robust Super Resolution
 - Fast Robust Super Resolution</param.description>
     <param.screenshot />
     <param.guid />
@@ -61,7 +61,21 @@ ${DYLD_LIBRARY_PATH}:MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci6
 	 
  Input Arguments 
 	 -?  print help on how to use the application 
-	 input arguments</param.help.text>
+	 input arguments 
+ Description 
+ 	 Tool to compute an image of higher resolution from a video of low resolution images.
+Choose from multiple Image-Registration methods and Super-Resolution algorithms.
+
+Image-Registration methods:
+- MATLAB Image Registration
+- Lukas-Kanade Optical Flow Affine
+- Lucas-Kanade Optical Flow Motion
+
+Super-Resolution Algorithms:
+- Adaptive Kernel Regression
+- Cubic Spline Interpolation
+- Robust Super Resolution
+- Fast Robust Super Resolution</param.help.text>
     <unset>
       <param.icon />
       <param.icons />
