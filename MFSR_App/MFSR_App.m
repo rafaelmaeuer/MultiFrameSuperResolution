@@ -455,8 +455,17 @@ classdef MFSR_App < matlab.apps.AppBase
             % transformation matrices for each frame
             stack = app.LRstack;
             LR_Reg = zeros(size(stack,1),size(stack,2), size(stack,3));
+            height = size(stack,1);
+            width = size(stack,2);
+            
+            if(app.RADIO_IR_LKFlowAffine.Value)
+                
+                Tmat(1,3,2:end) = Tmat(1,3,2:end) - width/2;
+                Tmat(2,3,2:end) = Tmat(2,3,2:end) + height/2;
+            end
             
             for i=1:size(stack,3)
+                I = 0;
                 % transform Tmat into the (wrong) MATLAB transformation matrix
                 trans = squeeze(Tmat(:,:,i));
                 trans = trans.';
@@ -465,7 +474,11 @@ classdef MFSR_App < matlab.apps.AppBase
                 % create the 2D transformation object needed for the
                 % transformation and warp the image with an additional size restriction
                 tform = affine2d(trans);
-                LR_Reg(:,:,i) = imwarp(stack(:,:,i),tform,'cubic','OutputView', imref2d(size(stack(:,:,i))));
+                I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
+                % LR_Reg(:,:,i) = imwarp(stack(:,:,i),tform,'cubic','OutputView', imref2d(size(stack(:,:,i)),height/2, width/2));
+                ymin = floor((size(I,1)-height)/2)+1;
+                xmin = floor((size(I,2)-width)/2)+1;
+                LR_Reg(:,:,i) = I(ymin:ymin+height-1,xmin:xmin+width-1);
             end
             % showprogress(app, '', 100);
         end
@@ -630,6 +643,12 @@ classdef MFSR_App < matlab.apps.AppBase
                 % Actually execute the image registration using the stack of
                 % geometric transformations in TM
                 app.LR_reg = imageRegistration(app,app.TM);
+                for i=1:size(app.LR_reg,3)
+                    figure(i)
+                    debug = app.LR_reg(:,:,i);
+                    image(debug)
+                end
+
                 app.imReg_flag = true;
             end
             
