@@ -557,6 +557,9 @@ classdef MFSR_App < matlab.apps.AppBase
                 app.BTN_next.Enable = 'on';
                 app.BTN_enhance.Enable = 'on';
                 app.BTN_saveLRFrame.Enable = 'on';
+                
+                % Reset the IR-Flag
+                app.imReg_flag = false;
             end
         end
 
@@ -694,7 +697,7 @@ classdef MFSR_App < matlab.apps.AppBase
             app.LABEL_heading_LRstack.FontSize = 20;
             app.LABEL_heading_LRstack.FontWeight = 'bold';
             app.LABEL_heading_LRstack.FontColor = [1 1 0];
-            app.LABEL_heading_LRstack.Position = [31 757 214 24];
+            app.LABEL_heading_LRstack.Position = [31 757 214 32];
             app.LABEL_heading_LRstack.Text = 'Low Resolution Stack';
 
             % Create LABEL_heading_HRstack
@@ -702,7 +705,7 @@ classdef MFSR_App < matlab.apps.AppBase
             app.LABEL_heading_HRstack.FontSize = 20;
             app.LABEL_heading_HRstack.FontWeight = 'bold';
             app.LABEL_heading_HRstack.FontColor = [1 1 0];
-            app.LABEL_heading_HRstack.Position = [431 757 240 24];
+            app.LABEL_heading_HRstack.Position = [431 757 240 32];
             app.LABEL_heading_HRstack.Text = 'Super Resolution Result';
 
             % Create PANEL_imInfo
@@ -1022,7 +1025,7 @@ classdef MFSR_App < matlab.apps.AppBase
 
             % Create RADIO_IR_LKFlowAffine
             app.RADIO_IR_LKFlowAffine = uiradiobutton(app.RADIOGROUP_IR_Method);
-            app.RADIO_IR_LKFlowAffine.Text = 'Lucas-Kanade Affiine';
+            app.RADIO_IR_LKFlowAffine.Text = 'Lucas-Kanade Affine';
             app.RADIO_IR_LKFlowAffine.FontSize = 14;
             app.RADIO_IR_LKFlowAffine.FontColor = [0.9412 0.9412 0.9412];
             app.RADIO_IR_LKFlowAffine.Position = [11 43 155 22];
@@ -1060,17 +1063,17 @@ classdef MFSR_App < matlab.apps.AppBase
 
             % Create RADIO_SR_Robust
             app.RADIO_SR_Robust = uiradiobutton(app.RADIOGROUP_SR_Method);
-            app.RADIO_SR_Robust.Text = 'Robust SR';
+            app.RADIO_SR_Robust.Text = 'Robust Super Resolution';
             app.RADIO_SR_Robust.FontSize = 14;
             app.RADIO_SR_Robust.FontColor = [0.9412 0.9412 0.9412];
-            app.RADIO_SR_Robust.Position = [11 35 90 22];
+            app.RADIO_SR_Robust.Position = [11 35 179 22];
 
             % Create RADIO_SR_FastRobust
             app.RADIO_SR_FastRobust = uiradiobutton(app.RADIOGROUP_SR_Method);
-            app.RADIO_SR_FastRobust.Text = 'Fast Robust SR';
+            app.RADIO_SR_FastRobust.Text = 'Fast Robust Super Resolution';
             app.RADIO_SR_FastRobust.FontSize = 14;
             app.RADIO_SR_FastRobust.FontColor = [0.9412 0.9412 0.9412];
-            app.RADIO_SR_FastRobust.Position = [11 8 121 22];
+            app.RADIO_SR_FastRobust.Position = [11 8 210 22];
 
             % Create BTN_reset
             app.BTN_reset = uibutton(app.MFSRToolUIFigure, 'push');
