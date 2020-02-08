@@ -142,10 +142,7 @@ classdef MFSR_App < matlab.apps.AppBase
             if app.RADIO_IR_LKFlowAffine.Value
                 
                 roi=[2 2 size(stack,1)-1 size(stack,2)-1];
-                
                 Mprev = squeeze(stack(:,:,1));
-                
-                % Tmat(:,:,1) = eye(3,3);
                 D = Tmat(1:2,1:3,1);
                 
                 for i=1:size(stack,3)
@@ -168,7 +165,9 @@ classdef MFSR_App < matlab.apps.AppBase
 
                     % project the affine 2x3 transformation matrix onto the general affine
                     % transformation matrix
-                    Tmat(1:2,:,i) = D;
+                    % Tmat(1:2,:,i) = D;
+                    Tmat(1:2,1:2,i) = D(1:2,1:2).';
+                    Tmat(1:2,3,i) = D(:,3);
                     
                     % sum up the iterations and errors
                     iter = iter + k;
@@ -455,14 +454,15 @@ classdef MFSR_App < matlab.apps.AppBase
             % transformation matrices for each frame
             stack = app.LRstack;
             LR_Reg = zeros(size(stack,1),size(stack,2), size(stack,3));
+            imReg = squeeze(cell(size(stack,3),1));
             height = size(stack,1);
             width = size(stack,2);
             
-            if(app.RADIO_IR_LKFlowAffine.Value)
-                
-                Tmat(1,3,2:end) = Tmat(1,3,2:end) - width/2;
-                Tmat(2,3,2:end) = Tmat(2,3,2:end) + height/2;
-            end
+%             if(app.RADIO_IR_LKFlowAffine.Value)
+%                 imNew = imref2d(size(squeeze(stack(:,:,1))));
+%                 imNew.XWorldLimits = imNew.XWorldLimits-2*mean(imNew.XWorldLimits);
+%                 imNew.YWorldLimits = imNew.YWorldLimits-2*mean(imNew.YWorldLimits);
+%             end
             
             for i=1:size(stack,3)
                 I = 0;
@@ -476,6 +476,9 @@ classdef MFSR_App < matlab.apps.AppBase
                 tform = affine2d(trans);
                 I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
                 % LR_Reg(:,:,i) = imwarp(stack(:,:,i),tform,'cubic','OutputView', imref2d(size(stack(:,:,i)),height/2, width/2));
+                
+                figure(i);
+                image(I);
                 ymin = floor((size(I,1)-height)/2)+1;
                 xmin = floor((size(I,2)-width)/2)+1;
                 LR_Reg(:,:,i) = I(ymin:ymin+height-1,xmin:xmin+width-1);
