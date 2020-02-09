@@ -3,7 +3,7 @@
     <param.appname>MFSR_Tool</param.appname>
     <param.icon />
     <param.icons />
-    <param.version>1.2</param.version>
+    <param.version>2.0</param.version>
     <param.authnamewatermark>Muellner, Maeuer, Schoettler, Kloos</param.authnamewatermark>
     <param.email>den_michael.muellner@smail.th-koeln.de</param.email>
     <param.company>TH Koeln</param.company>
@@ -61,21 +61,7 @@ ${DYLD_LIBRARY_PATH}:MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci6
 	 
  Input Arguments 
 	 -?  print help on how to use the application 
-	 input arguments 
- Description 
- 	 Tool to compute an image of higher resolution from a video of low resolution images.
-Choose from multiple Image-Registration methods and Super-Resolution algorithms.
-
-Image-Registration methods:
-- MATLAB Image Registration
-- Lukas-Kanade Optical Flow Affine
-- Lucas-Kanade Optical Flow Motion
-
-Super-Resolution Algorithms:
-- Adaptive Kernel Regression
-- Cubic Spline Interpolation
-- Robust Super Resolution
-- Fast Robust Super Resolution</param.help.text>
+	 input arguments</param.help.text>
     <unset>
       <param.icon />
       <param.icons />
@@ -110,6 +96,7 @@ Super-Resolution Algorithms:
     <fileset.package />
     <fileset.depfun>
       <file>${PROJECT_ROOT}/Helper/APP_buildIMG.m</file>
+      <file>${PROJECT_ROOT}/Helper/APP_cropImage.m</file>
       <file>${PROJECT_ROOT}/Helper/GradientRegulization.m</file>
       <file>${PROJECT_ROOT}/Helper/LoadVideo.m</file>
       <file>${PROJECT_ROOT}/Helper/MedianAndShift.m</file>
@@ -139,7 +126,11 @@ Super-Resolution Algorithms:
       <root>/Applications/MATLAB_R2019b.app</root>
       <toolboxes>
         <toolbox name="matlabcoder" />
+        <toolbox name="embeddedcoder" />
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabhdlcoder" />
         <toolbox name="neuralnetwork" />
+        <toolbox name="polyspacebugfinder" />
       </toolboxes>
       <toolbox>
         <matlabcoder>
@@ -147,9 +138,29 @@ Super-Resolution Algorithms:
         </matlabcoder>
       </toolbox>
       <toolbox>
+        <embeddedcoder>
+          <enabled>true</enabled>
+        </embeddedcoder>
+      </toolbox>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabhdlcoder>
+          <enabled>true</enabled>
+        </matlabhdlcoder>
+      </toolbox>
+      <toolbox>
         <neuralnetwork>
           <enabled>true</enabled>
         </neuralnetwork>
+      </toolbox>
+      <toolbox>
+        <polyspacebugfinder>
+          <enabled>true</enabled>
+        </polyspacebugfinder>
       </toolbox>
     </matlab>
     <platform>
@@ -161,7 +172,7 @@ Super-Resolution Algorithms:
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>10.14.6</osver>
+      <osver>10.15.2</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>maci64</arch>

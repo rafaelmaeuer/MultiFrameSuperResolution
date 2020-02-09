@@ -1,4 +1,4 @@
-MFSR_Tool Executable
+MFSR_App Executable
 
 1. Prerequisites for Deployment 
 
@@ -49,11 +49,11 @@ Files to Package for Standalone
     instructions in the previous section, include it when building your 
     component by clicking the "Runtime included in package" link in the
     Deployment Tool.
--The Macintosh bundle directory structure MFSR_Tool.app 
+-The Macintosh bundle directory structure MFSR_App.app 
     Note: this can be stored in an archive file with the zip command 
-    zip -r MFSR_Tool.zip MFSR_Tool.app
+    zip -r MFSR_App.zip MFSR_App.app
     or the tar command 
-    tar -cvf MFSR_Tool.tar MFSR_Tool.app
+    tar -cvf MFSR_App.tar MFSR_App.app
 -This readme file 
 
 
@@ -92,7 +92,7 @@ ${DYLD_LIBRARY_PATH}:MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci6
         NOTE: The environment variable syntax utilizes forward 
               slashes (/), delimited by colons (:).  
         NOTE: When deploying standalone applications, you can
-              run the shell script file run_MFSR_Tool.sh 
+              run the shell script file run_MFSR_App.sh 
               instead of setting environment variables. See 
               section 2 "Files to Deploy and Package".    
 

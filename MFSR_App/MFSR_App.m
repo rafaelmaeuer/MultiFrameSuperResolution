@@ -50,7 +50,7 @@ classdef MFSR_App < matlab.apps.AppBase
         RADIO_SR_FastRobust       matlab.ui.control.RadioButton
         BTN_reset                 matlab.ui.control.Button
         PANEL_SR_params           matlab.ui.container.Panel
-        ResfactorLabel            matlab.ui.control.Label
+        ResFactorLabel            matlab.ui.control.Label
         PARAM_ResFactor           matlab.ui.control.NumericEditField
         IterationsEditFieldLabel  matlab.ui.control.Label
         PARAM_Iterations          matlab.ui.control.NumericEditField
@@ -722,7 +722,7 @@ classdef MFSR_App < matlab.apps.AppBase
             % Create LABEL_imInfo_imHeight
             app.LABEL_imInfo_imHeight = uilabel(app.GRID_imInfo);
             app.LABEL_imInfo_imHeight.BackgroundColor = [0 0 0];
-            app.LABEL_imInfo_imHeight.FontSize = 14;
+            app.LABEL_imInfo_imHeight.FontSize = 13;
             app.LABEL_imInfo_imHeight.FontWeight = 'bold';
             app.LABEL_imInfo_imHeight.FontColor = [1 1 1];
             app.LABEL_imInfo_imHeight.Layout.Row = 2;
@@ -742,7 +742,7 @@ classdef MFSR_App < matlab.apps.AppBase
             % Create LABEL_imInfo_imWidth
             app.LABEL_imInfo_imWidth = uilabel(app.GRID_imInfo);
             app.LABEL_imInfo_imWidth.BackgroundColor = [0 0 0];
-            app.LABEL_imInfo_imWidth.FontSize = 14;
+            app.LABEL_imInfo_imWidth.FontSize = 13;
             app.LABEL_imInfo_imWidth.FontWeight = 'bold';
             app.LABEL_imInfo_imWidth.FontColor = [1 1 1];
             app.LABEL_imInfo_imWidth.Layout.Row = 2;
@@ -932,7 +932,7 @@ classdef MFSR_App < matlab.apps.AppBase
             app.LABEL_SR_time.FontColor = [1 1 1];
             app.LABEL_SR_time.Layout.Row = 1;
             app.LABEL_SR_time.Layout.Column = 1;
-            app.LABEL_SR_time.Text = 'time (ms):';
+            app.LABEL_SR_time.Text = 'time (sec):';
 
             % Create LABEL_SR_iter
             app.LABEL_SR_iter = uilabel(app.GRID_SR_bench);
@@ -950,7 +950,7 @@ classdef MFSR_App < matlab.apps.AppBase
             app.LABEL_SR_err.FontColor = [1 1 1];
             app.LABEL_SR_err.Layout.Row = 3;
             app.LABEL_SR_err.Layout.Column = 1;
-            app.LABEL_SR_err.Text = 'error';
+            app.LABEL_SR_err.Text = 'error:';
 
             % Create VAL_SR_t
             app.VAL_SR_t = uilabel(app.GRID_SR_bench);
@@ -1082,12 +1082,12 @@ classdef MFSR_App < matlab.apps.AppBase
             app.PANEL_SR_params.FontSize = 16;
             app.PANEL_SR_params.Position = [611 232 160 119];
 
-            % Create ResfactorLabel
-            app.ResfactorLabel = uilabel(app.PANEL_SR_params);
-            app.ResfactorLabel.FontSize = 14;
-            app.ResfactorLabel.FontColor = [0.9412 0.9412 0.9412];
-            app.ResfactorLabel.Position = [10 57 90 22];
-            app.ResfactorLabel.Text = 'Res - factor';
+            % Create ResFactorLabel
+            app.ResFactorLabel = uilabel(app.PANEL_SR_params);
+            app.ResFactorLabel.FontSize = 14;
+            app.ResFactorLabel.FontColor = [0.9412 0.9412 0.9412];
+            app.ResFactorLabel.Position = [10 57 90 22];
+            app.ResFactorLabel.Text = 'Res-Factor';
 
             % Create PARAM_ResFactor
             app.PARAM_ResFactor = uieditfield(app.PANEL_SR_params, 'numeric');
