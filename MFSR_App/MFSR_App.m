@@ -106,68 +106,81 @@ classdef MFSR_App < matlab.apps.AppBase
             params.maxIter = app.PARAM_Iterations.Value;
         end
         
-        function [Tmat, iter, err] = getTransform(app)
-            % Returns a 3x3xF stack of 3x3 image transformation matrices for each
+        function [LR_reg, Tvec, iter, err] = getTransform(app)
+            % Returns a 3x3xF stack of 3x3 gemoetric transformation matrices for each
             % frame f with respect to the reference frame (first frame in
-            % stack).
+            % stack) and the registered stack of images
+            
+            % initialize Progress bar
             showprogress(app, 'Image Registration in progress...', 0);
+            
+            % load the image stack handle to a local variable to increase
+            % speed
             stack = app.LRstack;
-            Tmat = zeros(3,3,size(stack,3));
+            
+            % initialize some parameters
+            LR_reg = zeros(size(stack));
+            Tvec = zeros(size(stack,3),2);
             iter = 0;
             err = 0;
             baseFrame = squeeze(stack(:,:,1));
-            
-            Tmat(:,:,1) = eye(3,3);
             
             % check if MATLAB registration Mode was selected
             if app.RADIO_IR_MATLAB.Value
                 
                 % Init matlab image registration
                 [optimizer, metric] = imregconfig('monomodal');
+                
+                % save image height and width
+                height = size(baseFrame,1);
+                width = size(baseFrame,2);
             
-                % Iterate through all frames
+                % Iterate through all frames except the base frame
                 for i=2:size(stack, 3)
                     showprogress(app, 'Image Registration in progress...', (i/size(stack,3)*100));
-                    % Get transformation vector from matlab image registration
-                    Tmat_i = imregtform(app.LRstack(:,:,i), baseFrame, 'affine', optimizer, metric);
                     
-                    % For some reason, the translation parameters are set
-                    % in the wrong position by the matlab method, so we
-                    % have to make some arrangements
-                    Tmat(:,:,i) = Tmat_i.T.';
-                    Tmat(1:2,1:2,i) = Tmat_i.T(1:2,1:2);
+                    % Get transformation matrix from matlab image registration
+                    tform = imregtform(app.LRstack(:,:,i), baseFrame, 'affine', optimizer, metric);
+                    
+                    % Warp the current frame using the calculated
+                    % transformation matrix
+                    I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
+                    
+                    % Crop the warped image to the initial size
+                    ymin = floor((size(I,1)-height)/2)+1;
+                    xmin = floor((size(I,2)-width)/2)+1;
+                    
+                    LR_reg(:,:,i) = I(ymin:ymin+height-1,xmin:xmin+width-1);
+                    
+                    % return the translation vector needed for Super
+                    % Resolution
+                    Tvec(i,:) = tform.T(3,1:2);
                 end
             end
             
             if app.RADIO_IR_LKFlowAffine.Value
                 
                 roi=[2 2 size(stack,1)-1 size(stack,2)-1];
-                Mprev = squeeze(stack(:,:,1));
-                D = Tmat(1:2,1:3,1);
+                D = [1 0 0; 0 1 0];
+                % D = zeros(2,3);
                 
                 for i=1:size(stack,3)
                     
                     showprogress(app, 'Image Registration in progress...', (i/size(stack,3))*100);
-                    Tmat(:,:,i) = eye(3,3);
                     
                     % Register current image to previous frame
-                    dc = PyramidalLKOpticalFlowAffine(Mprev, squeeze(stack(:,:,i)), roi);
+                    dc = PyramidalLKOpticalFlowAffine(baseFrame, squeeze(stack(:,:,i)), roi);
                     
-                    % Save current image
-                    Mprev = squeeze(stack(:,:,i));
-                    
-                    % Add current displacement to d (This is actually concatinating the two
+                    baseFrame = squeeze(stack(:,:,i));
+                    % Add current displacement dc to D (This is actually concatinating the two
                     % affine matrixes)
                     D = D + reshape(dc, 2, 3)*(eye(3)+[D;0 0 0]);
                     
                     % Compute displacement at current level
                     [D,k,e] = IterativeLKOpticalFlowAffine(squeeze(stack(:,:,1)), squeeze(stack(:,:,i)), roi, D);
-
-                    % project the affine 2x3 transformation matrix onto the general affine
-                    % transformation matrix
-                    % Tmat(1:2,:,i) = D;
-                    Tmat(1:2,1:2,i) = D(1:2,1:2).';
-                    Tmat(1:2,3,i) = D(:,3);
+                    LR_reg(:,:,i) = ResampleImgAffine(stack(:,:,i), [1 1 size(stack,1), size(stack,2)], D);
+                    
+                    Tvec(i,:) = D(:,3).';
                     
                     % sum up the iterations and errors
                     iter = iter + k;
@@ -180,23 +193,24 @@ classdef MFSR_App < matlab.apps.AppBase
                 % register images solely based on their tranlatory
                 % deviation. It uses a hierarchical gradient-based
                 % optimization method, using 6 levels of Low-Pass filtering
+                % for calculation of the optical flow parameters between
+                % two images
                 
                 % create the region of continuous flow for lowest hierarchy
                 % level of the gaussian pyramid
                 roi=[2 2 size(stack,1)-1 size(stack,2)-1];
                 
-                % Tmat(:,:,1) = eye(3,3);
-                
                 for i=1:size(stack,3)
                     showprogress(app, 'Image Registration in progress...', (i/size(stack,3))*100);
-                    Tmat(:,:,i) = eye(3,3);
                     
                     % Register current image to previous frame
                     [D, k, e] = PyramidalLKOpticalFlow(baseFrame, squeeze(stack(:,:,i)), roi);
                     
+                    LR_reg(:,:,i) = ResampleImg(stack(:,:,i), [1 1 size(stack,1), size(stack,2)], D);
+                    
                     % project the 2D-motion vector onto the general affine
                     % transformation matrix
-                    Tmat(1:2,3,i) = D.';
+                    Tvec(i,:) = D;
                     
                     % sum up the iterations and errors
                     iter = iter + k;
@@ -210,13 +224,13 @@ classdef MFSR_App < matlab.apps.AppBase
             err = err/(size(stack,3)-1);
         end
         
-        function [HR, iter] = superResolution(app, LR, Tmat, resFactor, params, Hpsf)
+        function [HR, iter] = superResolution(app, LR, Tvec, resFactor, params, Hpsf)
             showprogress(app, ' Estimating High Resolution image', 0);
             %% Adaptive Kernel Regression
             
             if app.RADIO_SR_KernelReg.Value
                 % set input buffer
-                buffer = LR;
+                buffer = app.LR_reg;
                 
                 % get input dimensions
                 [m,n,s] = size(LR);
@@ -341,27 +355,19 @@ classdef MFSR_App < matlab.apps.AppBase
             %% Robust SR
             if app.RADIO_SR_Robust.Value
                 
-                % Extract the motion vector from the affine Transformation
-                % matrix
-                Tvec = squeeze(Tmat(1:2, 3,:)).';
-                
                 % project the translation to the new image size, rounded to
                 % the nearest neighbour
-                Tvec_r = round(Tvec.*resFactor);
+                D = round(Tvec.*resFactor);
                 
                 %backproject the rounded vector to the initial size
-                D = mod(floor(Tvec_r/resFactor),resFactor)+resFactor;
+                Dr = floor(D/resFactor);
+                D = mod(D,resFactor)+resFactor;
                 
-                % Shift all images so D is bounded from 0-resFactor
-                stack = zeros(size(LR,1), size(LR,2), size(LR,3));
-                [X,Y]=meshgrid(1:size(LR, 2), 1:size(LR, 1));
-                
+                [X,Y] = meshgrid(1:size(LR, 2), 1:size(LR, 1));
+
                 for i=1:size(LR, 3)
-                
-                    stack(:,:,i)=interp2(X+Tvec_r(i,1), Y+Tvec_r(i,2), stack(:,:,i), X, Y, '*nearest');
-                
+                    LR(:,:,i) = interp2(X+Dr(i,1), Y+Dr(i,2), LR(:,:,i), X, Y, '*nearest');
                 end
-                
                 stack_r = LR(3:end-2,3:end-2,:);
                 
                 % Compute initial estimate of blurred HR by the means of MedianAndShift
@@ -394,35 +400,23 @@ classdef MFSR_App < matlab.apps.AppBase
             
             %% Fast Robust SR
             if app.RADIO_SR_FastRobust.Value
-                
-                % prepare data
-                % [Z, ~, A] = APP_prepareRSR(LR, Tmat);
-                
-                % Extract the motion vector from the affine Transformation
-                % matrix
-                Tvec = squeeze(Tmat(1:2, 3,:)).';
-                
                 % project the translation to the new image size, rounded to
                 % the nearest neighbour
-                Tvec_r = round(Tvec.*resFactor);
+                D = round(Tvec.*resFactor);
                 
                 %backproject the rounded vector to the initial size
-                D = mod(floor(Tvec_r/resFactor),resFactor)+resFactor;
+                Dr = floor(D/resFactor);
+                D = mod(D,resFactor)+resFactor;
                 
-                % Shift all images so D is bounded from 0-resFactor
-                stack = zeros(size(LR,1), size(LR,2), size(LR,3));
-                [X,Y]=meshgrid(1:size(LR, 2), 1:size(LR, 1));
-                
+                [X,Y] = meshgrid(1:size(LR, 2), 1:size(LR, 1));
+
                 for i=1:size(LR, 3)
-                
-                    stack(:,:,i)=interp2(X+Tvec_r(i,1), Y+Tvec_r(i,2), stack(:,:,i), X, Y, '*nearest');
-                
+                    LR(:,:,i) = interp2(X+Dr(i,1), Y+Dr(i,2), LR(:,:,i), X, Y, '*nearest');
                 end
-                
                 stack_r = LR(3:end-2,3:end-2,:);
                 
                 % Compute initial estimate of blurred HR by the means of MedianAndShift
-                [Z, A]=MedianAndShift(stack_r, D, [(size(stack_r,1)+1)*resFactor-1 (size(stack_r,2)+1)*resFactor-1], resFactor);
+                [Z, A] = MedianAndShift(stack_r, D, [(size(stack_r,1)+1)*resFactor-1 (size(stack_r,2)+1)*resFactor-1], resFactor);
 
                 % Deblur the HR image and regulate using bilatural filter
                 
@@ -446,44 +440,6 @@ classdef MFSR_App < matlab.apps.AppBase
                 end
             end
             showprogress(app, '', 100);
-        end
-        
-        function LR_Reg = imageRegistration(app, Tmat)
-            % uses the MATLAB imwarp-function to register all images of the
-            % image stack to the first frame based on a stack of affine
-            % transformation matrices for each frame
-            stack = app.LRstack;
-            LR_Reg = zeros(size(stack,1),size(stack,2), size(stack,3));
-            imReg = squeeze(cell(size(stack,3),1));
-            height = size(stack,1);
-            width = size(stack,2);
-            
-%             if(app.RADIO_IR_LKFlowAffine.Value)
-%                 imNew = imref2d(size(squeeze(stack(:,:,1))));
-%                 imNew.XWorldLimits = imNew.XWorldLimits-2*mean(imNew.XWorldLimits);
-%                 imNew.YWorldLimits = imNew.YWorldLimits-2*mean(imNew.YWorldLimits);
-%             end
-            
-            for i=1:size(stack,3)
-                I = 0;
-                % transform Tmat into the (wrong) MATLAB transformation matrix
-                trans = squeeze(Tmat(:,:,i));
-                trans = trans.';
-                trans(1:2,1:2) = trans(1:2,1:2).';
-                
-                % create the 2D transformation object needed for the
-                % transformation and warp the image with an additional size restriction
-                tform = affine2d(trans);
-                I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
-                % LR_Reg(:,:,i) = imwarp(stack(:,:,i),tform,'cubic','OutputView', imref2d(size(stack(:,:,i)),height/2, width/2));
-                
-                figure(i);
-                image(I);
-                ymin = floor((size(I,1)-height)/2)+1;
-                xmin = floor((size(I,2)-width)/2)+1;
-                LR_Reg(:,:,i) = I(ymin:ymin+height-1,xmin:xmin+width-1);
-            end
-            % showprogress(app, '', 100);
         end
         
         function showprogress(app, title, perc)
@@ -539,6 +495,8 @@ classdef MFSR_App < matlab.apps.AppBase
             % Image Registration
             addpath([pwd '/ImageRegistration/LKOFlow']);
             addpath([pwd '/ImageRegistration/LKOFlowAffine']);
+            addpath([pwd '/ImageRegistration/affine_Flow']);
+            
             % Super Resolution
             addpath([pwd '/SuperResolution/SplineInterpolation']);
             addpath([pwd '/SuperResolution/AdaptiveKernel']);
@@ -636,27 +594,18 @@ classdef MFSR_App < matlab.apps.AppBase
             % the sequence using the method chosen in the GUI
             if(~app.imReg_flag)
                 tic;
-                [app.TM, iter, err] = getTransform(app);
+                [app.LR_reg, app.TM, iter, err] = getTransform(app);
                 
                 % fill the benchmark measurement table
                 app.VAL_IR_t.Text = num2str(toc);
                 app.VAL_IR_err.Text = num2str(err);
-                app.VAL_IR_n.Text = num2str(iter);
-                
-                % Actually execute the image registration using the stack of
-                % geometric transformations in TM
-                app.LR_reg = imageRegistration(app,app.TM);
-                for i=1:size(app.LR_reg,3)
-                    figure(i)
-                    debug = app.LR_reg(:,:,i);
-                    image(debug)
-                end
+                %app.VAL_IR_n.Text = num2str(iter);
 
                 app.imReg_flag = true;
             end
             
             tic;
-            [app.HRimage, iter] = superResolution(app, app.LR_reg, app.TM, resFactor, params, Hpsf);
+            [app.HRimage, iter] = superResolution(app, app.LRstack, app.TM, resFactor, params, Hpsf);
             
             % fill the benchmark measurement table
             app.VAL_SR_t.Text = num2str(toc);

@@ -17,7 +17,7 @@
 % e - the remaining error
 function [d,iter,err] = IterativeLKOpticalFlowAffine(img1, img2, roi, dInit)
 
-K=10; % Number of iterations
+K=40; % Number of iterations
 STOP_THR = 0.01; % Stop if accuracy is better than 0.01 pixel
 
 % Copy inflated region of interest our of image (we need border for
