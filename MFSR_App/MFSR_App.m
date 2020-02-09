@@ -107,7 +107,7 @@ classdef MFSR_App < matlab.apps.AppBase
         end
         
         function [LR_reg, Tvec, iter, err] = getTransform(app)
-            % Returns a 3x3xF stack of 3x3 gemoetric transformation matrices for each
+            % Returns the translation vector for each
             % frame f with respect to the reference frame (first frame in
             % stack) and the registered stack of images
             
@@ -118,9 +118,6 @@ classdef MFSR_App < matlab.apps.AppBase
             % speed
             stack = app.LRstack;
             
-            % create container for uncropped registered images
-            unCropped = squeeze(cell(size(stack, 3),1));
-            
             % initialize some parameters
             LR_reg = zeros(size(stack));
             Tvec = zeros(size(stack,3),2);
@@ -128,15 +125,15 @@ classdef MFSR_App < matlab.apps.AppBase
             err = 0;
             baseFrame = squeeze(stack(:,:,1));
             
+            % save image height and width
+            height = size(baseFrame,1);
+            width = size(baseFrame,2);
+            
             % check if MATLAB registration Mode was selected
             if app.RADIO_IR_MATLAB.Value
                 
                 % Init matlab image registration
                 [optimizer, metric] = imregconfig('monomodal');
-                
-                % save image height and width
-                height = size(baseFrame,1);
-                width = size(baseFrame,2);
             
                 % Iterate through all frames except the base frame
                 for i=2:size(stack, 3)
@@ -145,46 +142,37 @@ classdef MFSR_App < matlab.apps.AppBase
                     % Get transformation matrix from matlab image registration
                     tform = imregtform(app.LRstack(:,:,i), baseFrame, 'affine', optimizer, metric);
                     
+                    % Extract the translation vector and set translation
+                    % zero
+                    Tvec(i,:) = tform.T(3,1:2);
+                    tform.T(3,1:2) = [0 0];
+                    
                     % Warp the current frame using the calculated
                     % transformation matrix
                     I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
                     
-                    unCropped{i} = I;
-                    % Crop the warped image to the initial size
-%                     ymin = floor((size(I,1)-height)/2)+1;
-%                     xmin = floor((size(I,2)-width)/2)+1;
-%                     
-%                     LR_reg(:,:,i) = I(ymin:ymin+height-1,xmin:xmin+width-1);
-                    
-                    figure(i);
-                    image(unCropped{i});
-                    % return the translation vector needed for Super
-                    % Resolution
-                    Tvec(i,:) = tform.T(3,1:2);
+                    % Crop Image to initial size
+                    LR_reg(:,:,i) = APP_cropImage(I,width, height);
                 end
             end
             
             if app.RADIO_IR_LKFlowAffine.Value
                 
                 roi=[2 2 size(stack,1)-1 size(stack,2)-1];
+                
+                % initialize transformation matrix
                 D = [1 0 0; 0 1 0];
-                % D = zeros(2,3);
-                dc = zeros(2,3);
                 
                 for i=2:size(stack,3)
                     
                     showprogress(app, 'Image Registration in progress...', (i/size(stack,3))*100);
                     
                     % Register current image to previous frame
-                    % dc = PyramidalLKOpticalFlowAffine(baseFrame, squeeze(stack(:,:,i)), roi);
+                    dc = PyramidalLKOpticalFlowAffine(baseFrame, squeeze(stack(:,:,i)), roi);
                     
-                    af = affine_flow('image1', baseFrame, 'image2', squeeze(stack(:,:,i)));
-                    af = af.findFlow;
-                    dc(1:2,1:2) = af.flowMatrix(1:2,1:2);
-                    dc(1,3) = af.flowMatrix(3,1);
-                    dc(2,3) = af.flowMatrix(3,2);
-                    
-                    %baseFrame = squeeze(stack(:,:,i));
+                    % Set the current frame as base-frame for the next
+                    % iteration
+                    baseFrame = squeeze(stack(:,:,i));
                     
                     % Add current displacement dc to D (This is actually concatinating the two
                     % affine matrixes)
@@ -194,16 +182,17 @@ classdef MFSR_App < matlab.apps.AppBase
                     [D,k,e] = IterativeLKOpticalFlowAffine(squeeze(stack(:,:,1)), squeeze(stack(:,:,i)), roi, D);
                     LR_reg(:,:,i) = ResampleImgAffine(stack(:,:,i), [1 1 size(stack,1), size(stack,2)], D);
                     
-                    %% TRY MATLAB IMAGE REGISTRATION
+                    % set the return value for translation vector
+                    Tvec(i,:) = [D(1,3), D(2,3)];
                     
-                    tform = affine2d([ D(1,1) D(2,1) 0; D(1,2) D(2,2) 0; D(1,3) D(2,3) 1]);
-                    unCropped{i} = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
-                    %% END
+                    % Perform MATLAB Image Registration
+
+                    tform = affine2d([ D(1,1) D(2,1) 0; D(1,2) D(2,2) 0; 0 0 1]);
+                    I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
                     
-                    Tvec(i,:) = D(:,3).';
-                    
-                    figure(i);
-                    image(unCropped{i});
+                    % LKFlowAffine performs a weird zoom, so we have to
+                    % resize the images to get size-normalized results
+                    LR_reg(:,:,i) = imresize(I, [height, width]);
                     
                     % sum up the iterations and errors
                     iter = iter + k;
@@ -229,21 +218,14 @@ classdef MFSR_App < matlab.apps.AppBase
                     % Register current image to previous frame
                     [D, k, e] = PyramidalLKOpticalFlow(baseFrame, squeeze(stack(:,:,i)), roi);
                     
-                    LR_reg(:,:,i) = ResampleImg(stack(:,:,i), [1 1 size(stack,1), size(stack,2)], D);
-                    
                     % project the 2D-motion vector onto the general affine
                     % transformation matrix
                     Tvec(i,:) = D;
                     
-                    %% TRY MATLAB IMAGE REGISTRATION
-                    
-                    tform = affine2d([1 0 D(1); 0 1 D(2) ; 0 0 1].');
-                    
-                    unCropped{i} = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
-                    %% END
-                    
-                    figure(i);
-                    image(unCropped{i});
+                    % Perform Image registration
+                    tform = affine2d([ 1 0 0; 0 1 0; D(1) D(2) 1]);
+                    I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
+                    LR_reg(:,:,i) = APP_cropImage(I, width, height);
                     
                     % sum up the iterations and errors
                     iter = iter + k;
@@ -263,8 +245,7 @@ classdef MFSR_App < matlab.apps.AppBase
             
             if app.RADIO_SR_KernelReg.Value
                 % set input buffer
-                buffer = app.LR_reg;
-                % buffer = LR;
+                buffer = LR;
                 
                 % get input dimensions
                 [m,n,s] = size(LR);
@@ -353,6 +334,7 @@ classdef MFSR_App < matlab.apps.AppBase
             
             %% Cubic Spline Interpolation
             if app.RADIO_SR_Cubic.Value
+                LR = app.LRstack;
                 
                 % Initialize guess as interpolated version of LR
                 [X,Y]=meshgrid(0:resFactor:(size(LR,2)-1)*resFactor, 0:resFactor:(size(LR,1)-1)*resFactor);
@@ -417,7 +399,6 @@ classdef MFSR_App < matlab.apps.AppBase
                 while iter<params.maxIter
                 
                     showprogress(app, ' Estimating High Resolution image', (iter/params.maxIter*100));
-%                     waitbar(iter/params.maxIter);
                     
                     % Compute gradient of the energy part of the cost function
                     Gback = GradientBackProject(HR, stack_r, D, Hpsf, resFactor);
@@ -441,6 +422,8 @@ classdef MFSR_App < matlab.apps.AppBase
                 %backproject the rounded vector to the initial size
                 Dr = floor(D/resFactor);
                 D = mod(D,resFactor)+resFactor;
+                
+                % LR = app.LRstack;
                 
                 [X,Y] = meshgrid(1:size(LR, 2), 1:size(LR, 1));
 
@@ -633,7 +616,7 @@ classdef MFSR_App < matlab.apps.AppBase
                 % fill the benchmark measurement table
                 app.VAL_IR_t.Text = num2str(toc);
                 app.VAL_IR_err.Text = num2str(err);
-                %app.VAL_IR_n.Text = num2str(iter);
+                app.VAL_IR_n.Text = num2str(iter);
 
                 app.imReg_flag = true;
             end
