@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="148542203" file="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/MFSR_App.prj" location="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App" name="MFSR_App" preferred-package-location="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/MFSR_App/for_redistribution" preferred-package-type="package.type.app" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="2511658915" file="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App.prj" location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App" name="MFSR_App" preferred-package-location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>MFSR_Tool</param.appname>
     <param.icon />
     <param.icons />
@@ -21,25 +21,17 @@ Super-Resolution Algorithms:
 - Cubic Spline Interpolation
 - Robust Super Resolution
 - Fast Robust Super Resolution</param.description>
-    <param.screenshot />
+    <param.screenshot>C:\Users\DMuellner\Downloads\d861e778-4514-426c-8ac0-451c87102727_200x200.png</param.screenshot>
     <param.guid />
-    <param.installpath.string>/MFSR_Tool/</param.installpath.string>
-    <param.installpath.combo>option.installpath.systemwideapp</param.installpath.combo>
+    <param.installpath.string>\MFSR_Tool\</param.installpath.string>
+    <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
     <param.logo />
     <param.install.notes />
-    <param.target.install.notes>In the following directions, replace MR/v97 by the directory on the target machine where MATLAB is installed, or MR by the directory where the MATLAB Runtime is installed.
-
-If the environment variable DYLD_LIBRARY_PATH is undefined, set it to the following string:
-
-MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci64
-
-If it is defined, set it to the following:
-
-${DYLD_LIBRARY_PATH}:MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci64</param.target.install.notes>
-    <param.intermediate>${PROJECT_ROOT}/MFSR_App/for_testing</param.intermediate>
-    <param.files.only>${PROJECT_ROOT}/MFSR_App/for_redistribution_files_only</param.files.only>
-    <param.output>${PROJECT_ROOT}/MFSR_App/for_redistribution</param.output>
-    <param.logdir>${PROJECT_ROOT}/MFSR_App</param.logdir>
+    <param.target.install.notes />
+    <param.intermediate>${PROJECT_ROOT}\MFSR_App\for_testing</param.intermediate>
+    <param.files.only>${PROJECT_ROOT}\MFSR_App\for_redistribution_files_only</param.files.only>
+    <param.output>${PROJECT_ROOT}\MFSR_App\for_redistribution</param.output>
+    <param.logdir>${PROJECT_ROOT}\MFSR_App</param.logdir>
     <param.enable.clean.build>false</param.enable.clean.build>
     <param.user.defined.mcr.options />
     <param.target.type>subtarget.standalone</param.target.type>
@@ -50,7 +42,7 @@ ${DYLD_LIBRARY_PATH}:MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci6
     <param.web.mcr.name>MFSR_Installer_web</param.web.mcr.name>
     <param.package.mcr.name>MFSR_Installer</param.package.mcr.name>
     <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
-    <param.windows.command.prompt>false</param.windows.command.prompt>
+    <param.windows.command.prompt>true</param.windows.command.prompt>
     <param.create.log>false</param.create.log>
     <param.log.file />
     <param.native.matlab>false</param.native.matlab>
@@ -65,11 +57,11 @@ ${DYLD_LIBRARY_PATH}:MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci6
     <unset>
       <param.icon />
       <param.icons />
-      <param.screenshot />
       <param.guid />
       <param.installpath.combo />
       <param.logo />
       <param.install.notes />
+      <param.target.install.notes />
       <param.intermediate />
       <param.files.only />
       <param.output />
@@ -90,47 +82,25 @@ ${DYLD_LIBRARY_PATH}:MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci6
       <param.example />
     </unset>
     <fileset.main>
-      <file>${PROJECT_ROOT}/MFSR_App.mlapp</file>
+      <file>${PROJECT_ROOT}\MFSR_App.mlapp</file>
     </fileset.main>
     <fileset.resources />
     <fileset.package />
-    <fileset.depfun>
-      <file>${PROJECT_ROOT}/Helper/APP_buildIMG.m</file>
-      <file>${PROJECT_ROOT}/Helper/APP_cropImage.m</file>
-      <file>${PROJECT_ROOT}/Helper/GradientRegulization.m</file>
-      <file>${PROJECT_ROOT}/Helper/LoadVideo.m</file>
-      <file>${PROJECT_ROOT}/Helper/MedianAndShift.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/ComputeLKFlowParms.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/GaussianDownSample.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/GuassianPyramid.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/IterativeLKOpticalFlow.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/PyramidalLKOpticalFlow.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/ResampleImg.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/ComputeLKFlowParmsAffine.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/GaussianDownSampleAffine.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/GuassianPyramidAffine.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/IterativeLKOpticalFlowAffine.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/PyramidalLKOpticalFlowAffine.m</file>
-      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/ResampleImgAffine.m</file>
-      <file>${PROJECT_ROOT}/SuperResolution/FastRobust/FastGradientBackProject.m</file>
-      <file>${PROJECT_ROOT}/SuperResolution/Robust/GradientBackProject.m</file>
-    </fileset.depfun>
+    <fileset.depfun />
     <build-deliverables>
-      <file location="${PROJECT_ROOT}/MFSR_App/for_testing" name="run_MFSR_Tool.sh" optional="false">/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/MFSR_App/for_testing/run_MFSR_Tool.sh</file>
-      <file location="${PROJECT_ROOT}/MFSR_App/for_testing" name="MFSR_Tool.app" optional="false">/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/MFSR_App/for_testing/MFSR_Tool.app</file>
-      <file location="${PROJECT_ROOT}/MFSR_App/for_testing" name="readme.txt" optional="true">/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/MFSR_App/for_testing/readme.txt</file>
-      <file location="${PROJECT_ROOT}/MFSR_App/for_testing" name="splash.png" optional="false">/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/MFSR_App/for_testing/splash.png</file>
+      <file location="${PROJECT_ROOT}\MFSR_App\for_testing" name="MFSR_Tool.exe" optional="false">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App\for_testing\MFSR_Tool.exe</file>
+      <file location="${PROJECT_ROOT}\MFSR_App\for_testing" name="splash.png" optional="false">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\MFSR_App\for_testing" name="readme.txt" optional="true">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App\for_testing\readme.txt</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>/Applications/MATLAB_R2019b.app</root>
+      <root>C:\Program Files\MATLAB\R2019b</root>
       <toolboxes>
         <toolbox name="matlabcoder" />
-        <toolbox name="embeddedcoder" />
+        <toolbox name="gpucoder" />
         <toolbox name="fixedpoint" />
         <toolbox name="matlabhdlcoder" />
         <toolbox name="neuralnetwork" />
-        <toolbox name="polyspacebugfinder" />
       </toolboxes>
       <toolbox>
         <matlabcoder>
@@ -138,9 +108,9 @@ ${DYLD_LIBRARY_PATH}:MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci6
         </matlabcoder>
       </toolbox>
       <toolbox>
-        <embeddedcoder>
+        <gpucoder>
           <enabled>true</enabled>
-        </embeddedcoder>
+        </gpucoder>
       </toolbox>
       <toolbox>
         <fixedpoint>
@@ -157,25 +127,20 @@ ${DYLD_LIBRARY_PATH}:MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci6
           <enabled>true</enabled>
         </neuralnetwork>
       </toolbox>
-      <toolbox>
-        <polyspacebugfinder>
-          <enabled>true</enabled>
-        </polyspacebugfinder>
-      </toolbox>
     </matlab>
     <platform>
-      <unix>true</unix>
-      <mac>true</mac>
-      <windows>false</windows>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
       <win2k>false</win2k>
       <winxp>false</winxp>
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>10.15.2</osver>
+      <osver>10.0</osver>
       <os32>false</os32>
       <os64>true</os64>
-      <arch>maci64</arch>
+      <arch>win64</arch>
       <matlab>true</matlab>
     </platform>
   </configuration>
