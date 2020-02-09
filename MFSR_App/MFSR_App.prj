@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="2511658915" file="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App.prj" location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App" name="MFSR_App" preferred-package-location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="2511658915" file="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App.prj" location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App" name="MFSR_App" preferred-package-location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>MFSR_Tool</param.appname>
     <param.icon />
     <param.icons />
@@ -21,16 +21,16 @@ Super-Resolution Algorithms:
 - Cubic Spline Interpolation
 - Robust Super Resolution
 - Fast Robust Super Resolution</param.description>
-    <param.screenshot>C:\Users\DMuellner\Downloads\d861e778-4514-426c-8ac0-451c87102727_200x200.png</param.screenshot>
+    <param.screenshot>C:\Users\DMuellner\Downloads\MFSR_icon.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\MFSR_Tool\</param.installpath.string>
     <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
     <param.logo />
     <param.install.notes />
     <param.target.install.notes />
-    <param.intermediate>${PROJECT_ROOT}\MFSR_App\for_testing</param.intermediate>
-    <param.files.only>${PROJECT_ROOT}\MFSR_App\for_redistribution_files_only</param.files.only>
-    <param.output>${PROJECT_ROOT}\MFSR_App\for_redistribution</param.output>
+    <param.intermediate>C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_testing</param.intermediate>
+    <param.files.only>C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_redistribution_files_only</param.files.only>
+    <param.output>C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_redistribution</param.output>
     <param.logdir>${PROJECT_ROOT}\MFSR_App</param.logdir>
     <param.enable.clean.build>false</param.enable.clean.build>
     <param.user.defined.mcr.options />
@@ -62,9 +62,6 @@ Super-Resolution Algorithms:
       <param.logo />
       <param.install.notes />
       <param.target.install.notes />
-      <param.intermediate />
-      <param.files.only />
-      <param.output />
       <param.logdir />
       <param.enable.clean.build />
       <param.user.defined.mcr.options />
@@ -88,9 +85,9 @@ Super-Resolution Algorithms:
     <fileset.package />
     <fileset.depfun />
     <build-deliverables>
-      <file location="${PROJECT_ROOT}\MFSR_App\for_testing" name="MFSR_Tool.exe" optional="false">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App\for_testing\MFSR_Tool.exe</file>
-      <file location="${PROJECT_ROOT}\MFSR_App\for_testing" name="splash.png" optional="false">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App\for_testing\splash.png</file>
-      <file location="${PROJECT_ROOT}\MFSR_App\for_testing" name="readme.txt" optional="true">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App\for_testing\readme.txt</file>
+      <file location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_testing" name="readme.txt" optional="true">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_testing\readme.txt</file>
+      <file location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_testing" name="MFSR_Tool.exe" optional="false">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_testing\MFSR_Tool.exe</file>
+      <file location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_testing" name="splash.png" optional="false">C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_testing\splash.png</file>
     </build-deliverables>
     <workflow />
     <matlab>
