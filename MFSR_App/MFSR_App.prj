@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="1068389174" file="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/MFSR_App.prj" location="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App" name="MFSR_App" preferred-package-location="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\MFSR_Tool_exe\for_redistribution" preferred-package-type="package.type.app" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="4143234666" file="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/MFSR_App.prj" location="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App" name="MFSR_App" preferred-package-location="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/MFSR_App/for_redistribution" preferred-package-type="package.type.app" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>MFSR_Tool</param.appname>
     <param.icon>${PROJECT_ROOT}/MFSR_App_resources/icon.icns</param.icon>
     <param.icons>
@@ -26,11 +26,11 @@ Super-Resolution Algorithms:
 - Cubic Spline Interpolation
 - Robust Super Resolution
 - Fast Robust Super Resolution</param.description>
-    <param.screenshot>/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/Images/MFSR_Logo.png</param.screenshot>
+    <param.screenshot>${PROJECT_ROOT}/MFSR_App_resources/MFSR_Icon_400x400.png</param.screenshot>
     <param.guid />
     <param.installpath.string>/MFSR_Tool/</param.installpath.string>
     <param.installpath.combo>option.installpath.systemwideapp</param.installpath.combo>
-    <param.logo>/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/Images/MFSR_Splash.png</param.logo>
+    <param.logo>${PROJECT_ROOT}/MFSR_App_resources/MFSR_Splash_150x300.png</param.logo>
     <param.install.notes />
     <param.target.install.notes>In the following directions, replace MR/v97 by the directory on the target machine where MATLAB is installed, or MR by the directory where the MATLAB Runtime is installed.
 
