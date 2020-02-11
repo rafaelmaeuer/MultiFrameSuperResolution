@@ -112,124 +112,30 @@ classdef MFSR_App < matlab.apps.AppBase
             % stack) and the registered stack of images
             
             % initialize Progress bar
-            showprogress(app, 'Image Registration in progress...', 0);
+            ShowProgress(app, 'Image Registration in progress...', 0);
             
-            % load the image stack handle to a local variable to increase
-            % speed
+            % load the image stack handle to a local variable to increase speed
             stack = app.LRstack;
             
-            % initialize some parameters
+            % initialize output parameters
             LR_reg = zeros(size(stack));
             Tvec = zeros(size(stack,3),2);
             iter = 0;
             err = 0;
-            baseFrame = squeeze(stack(:,:,1));
             
-            % save image height and width
-            height = size(baseFrame,1);
-            width = size(baseFrame,2);
-            
-            % check if MATLAB registration Mode was selected
+            %% Matlab Image Registration
             if app.RADIO_IR_MATLAB.Value
-                
-                % Init matlab image registration
-                [optimizer, metric] = imregconfig('monomodal');
-            
-                % Iterate through all frames except the base frame
-                for i=2:size(stack, 3)
-                    showprogress(app, 'Image Registration in progress...', (i/size(stack,3)*100));
-                    
-                    % Get transformation matrix from matlab image registration
-                    tform = imregtform(app.LRstack(:,:,i), baseFrame, 'affine', optimizer, metric);
-                    
-                    % Extract the translation vector and set translation
-                    % zero
-                    Tvec(i,:) = tform.T(3,1:2);
-                    tform.T(3,1:2) = [0 0];
-                    
-                    % Warp the current frame using the calculated
-                    % transformation matrix
-                    I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
-                    
-                    % Crop Image to initial size
-                    LR_reg(:,:,i) = APP_cropImage(I,width, height);
-                end
+                [LR_reg, Tvec] = RegisterImageSeqMatlab(app, stack);
             end
             
+            %% LK Optical Flow Affine Image Registration
             if app.RADIO_IR_LKFlowAffine.Value
-                
-                roi=[2 2 size(stack,1)-1 size(stack,2)-1];
-                
-                % initialize transformation matrix
-                D = [1 0 0; 0 1 0];
-                
-                for i=2:size(stack,3)
-                    
-                    showprogress(app, 'Image Registration in progress...', (i/size(stack,3))*100);
-                    
-                    % Register current image to previous frame
-                    dc = PyramidalLKOpticalFlowAffine(baseFrame, squeeze(stack(:,:,i)), roi);
-                    
-                    % Set the current frame as base-frame for the next
-                    % iteration
-                    baseFrame = squeeze(stack(:,:,i));
-                    
-                    % Add current displacement dc to D (This is actually concatinating the two
-                    % affine matrixes)
-                    D = D + reshape(dc, 2, 3)*(eye(3)+[D;0 0 0]);
-                    
-                    % Compute displacement at current level
-                    [D,k,e] = IterativeLKOpticalFlowAffine(squeeze(stack(:,:,1)), squeeze(stack(:,:,i)), roi, D);
-                    
-                    % set the return value for translation vector
-                    Tvec(i,:) = [D(1,3), D(2,3)];
-                    
-                    % Perform MATLAB Image Registration
-
-                    tform = affine2d([ D(1,1) D(2,1) 0; D(1,2) D(2,2) 0; 0 0 1]);
-                    I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
-                    
-                    % LKFlowAffine performs a weird zoom, so we have to
-                    % resize the images to get size-normalized results
-                    LR_reg(:,:,i) = imresize(I, [height, width]);
-                    
-                    % sum up the iterations and errors
-                    iter = iter + k;
-                    err = err + e;
-                end
+                [LR_reg, Tvec, iter, err] = RegisterImageSeqAffine(app, stack);
             end
             
+            %% LK Optical Flow Image Registration
             if app.RADIO_IR_LKFlow.Value
-                % this method uses a simplified Lucas-Kanade method to
-                % register images solely based on their tranlatory
-                % deviation. It uses a hierarchical gradient-based
-                % optimization method, using 6 levels of Low-Pass filtering
-                % for calculation of the optical flow parameters between
-                % two images
-                
-                % create the region of continuous flow for lowest hierarchy
-                % level of the gaussian pyramid
-                roi=[2 2 size(stack,1)-1 size(stack,2)-1];
-                
-                for i=2:size(stack,3)
-                    showprogress(app, 'Image Registration in progress...', (i/size(stack,3))*100);
-                    
-                    % Register current image to previous frame
-                    [D, k, e] = PyramidalLKOpticalFlow(baseFrame, squeeze(stack(:,:,i)), roi);
-                    
-                    % project the 2D-motion vector onto the general affine
-                    % transformation matrix
-                    Tvec(i,:) = D;
-                    
-                    % Perform Image registration
-                    tform = affine2d([ 1 0 0; 0 1 0; D(1) D(2) 1]);
-                    I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
-                    LR_reg(:,:,i) = APP_cropImage(I, width, height);
-                    
-                    % sum up the iterations and errors
-                    iter = iter + k;
-                    err = err + e;
-                end
+                [LR_reg, Tvec, iter, err] = RegisterImageSeq(app, stack);
             end
             
             % compute the mean number of iterations (rounded) and the
@@ -238,266 +144,31 @@ classdef MFSR_App < matlab.apps.AppBase
             err = err/(size(stack,3)-1);
         end
         
-        function [HR, iter] = superResolution(app, LR, Tvec, resFactor, params, Hpsf)
-            showprogress(app, ' Estimating High Resolution image', 0);
-            %% Adaptive Kernel Regression
+        function [HR, iter] = superResolution(app, LR, Tvec, resFactor, Hpsf, params)
+            ShowProgress(app, ' Estimating High Resolution image', 0);
             
+            %% Adaptive Kernel Regression
             if app.RADIO_SR_KernelReg.Value
-                % set input buffer
-                buffer = LR;
-                
-                % get input dimensions
-                [m,n,s] = size(LR);
-                
-                % what are these for?
-                h= 0.5;
-                hr= 255;
-                
-                % set scaling factor
-                f= resFactor;
-                % set position by scaling factor
-                fp = f-1;
-                % set iterator by scaling factor
-                fi= f^2;
-                
-                % waitbar
-                iter= 1;
-                maxIter= m*n;
-                
-                % loop through y (image height) minus scaling factor as border
-                for i= 1:m-(f)
-                    showprogress(app, ' Estimating High Resolution image', (iter/maxIter*100));
-                    
-                    % loop through x (image width) minus scaling factor as border
-                    for j= 1:n-(f)
-                        
-                        % init arrays for kernel-regression and kernel-regression-frame (s) pixel values
-                        for l= 1:fi
-                            kr(l) = 0;
-                            krf(l)= 0;
-                        end
-                        
-                        % loop through s frames or maximum number of iterations
-                        if(params.maxIter < s)
-                            s = params.maxIter;
-                        end
-                        
-                        for k= 1:s
-                            
-                            % create Gaussian kernel
-                            kr_bilat= (1/(f*pi*hr*hr))*exp(-(norm(buffer(i,j,k)-mean(buffer(i,j,:))).^2)/(f*hr*hr));
-                            
-                            % init line and index values
-                            line = 0; idx = 0;
-                            for o= 1:fi
-                
-                                % sum kernel-regression and kernel-regression-frame (k) pixel values
-                                kr(o)= kr(o) + (1/(f*pi*h*h))*exp(-(norm((i+line-i)^2+(j+idx-j)^2).^2)/(f*h*h))*kr_bilat;
-                                krf(o)= krf(o) + buffer(i+line,j+idx,k)*(1/(f*pi*h*h))*exp(-(norm((i+line-i)^2+(j+idx-j)^2).^2)/(f*h*h))*kr_bilat;
-                                idx = idx + 1;
-                
-                                % if index is multiple of resolution factor, increment line
-                                if(mod(o, f) == 0)
-                                    line = line + 1;
-                                    idx = 0;
-                                end
-                            end
-                
-                        end
-                        
-                        % init line and index values
-                        line = 1; idx = 1;
-                        for r= 1:fi
-                            
-                            % fill temporary quadratic matrix in size of resolution factor
-                            tmp(line, idx)= krf(r)/kr(r);
-                            idx = idx + 1;
-                            
-                            % if index is multiple of resolution factor, increment line
-                            if(mod(r, f) == 0)
-                                line = line + 1;
-                                idx = 1;
-                            end
-                        end
-                        
-                        % write pixel values from temporary matrix to correct position
-                        ynew(f*i-fp:f*i,f*j-fp:f*j)= tmp;
-                        iter=iter+1;
-                    end
-                    iter=iter+1;
-                end
-                
-                % median filter
-                HR= medfilt2(ynew,[f f]);
+                [HR, iter] = AdaptiveKernel(app, LR, resFactor, params);
             end
             
             %% Cubic Spline Interpolation
             if app.RADIO_SR_Cubic.Value
-                LR = app.LRstack;
-                
-                % Initialize guess as interpolated version of LR
-                [X,Y]=meshgrid(0:resFactor:(size(LR,2)-1)*resFactor, 0:resFactor:(size(LR,1)-1)*resFactor);
-                [XI,YI]=meshgrid(resFactor+1:(size(LR,2)-2)*resFactor-1, resFactor+1:(size(LR,1)-2)*resFactor-1);
-                
-                Z=interp2(X, Y, squeeze(LR(:,:,1)), XI, YI, '*spline');
-                
-                % Deblur the HR image and regulate using bilatural filter
-                
-                % Loop and improve HR in steepest descent direction
-                HR = Z;
-                iter = 1;
-                A = ones(size(HR));
-                
-                %h=waitbar(0, 'Estimating high-resolution image');
-                
-                while iter<params.maxIter
-                  showprogress(app, ' Estimating High Resolution image', (iter/params.maxIter*100));
-                  %waitbar(iter/params.maxIter);
-                  
-                  % Compute gradient of the energy part of the cost function
-                  Gback = FastGradientBackProject(HR, Z, A, Hpsf);
-                
-                  % Compute the gradient of the bilateral filter part of the cost function
-                  Greg = GradientRegulization(HR, params.P, params.alpha);
-                
-                  % Perform a single SD step
-                  HR = HR - params.beta.*(Gback + params.lambda.* Greg);
-                  
-                  iter=iter+1;
-                 end
+                [HR, iter] = SplineSRInterp(app, LR, resFactor, Hpsf, params);
             end
             
             %% Robust SR
             if app.RADIO_SR_Robust.Value
-                
-                % project the translation to the new image size, rounded to
-                % the nearest neighbour
-                D = round(Tvec.*resFactor);
-                
-                %backproject the rounded vector to the initial size
-                Dr = floor(D/resFactor);
-                D = mod(D,resFactor)+resFactor;
-                
-                [X,Y] = meshgrid(1:size(LR, 2), 1:size(LR, 1));
-
-                for i=1:size(LR, 3)
-                    LR(:,:,i) = interp2(X+Dr(i,1), Y+Dr(i,2), LR(:,:,i), X, Y, '*nearest');
-                end
-                stack_r = LR(3:end-2,3:end-2,:);
-                
-                % Compute initial estimate of blurred HR by the means of MedianAndShift
-                [Z, A]=MedianAndShift(stack_r, D, [(size(stack_r,1)+1)*resFactor-1 (size(stack_r,2)+1)*resFactor-1], resFactor);
-
-                % Deblur the HR image and regulate using bilatural filter
-                
-                % Loop and improve HR in steepest descent direction
-                HR = Z;
-                
-                iter = 1;
-                
-                while iter<params.maxIter
-                
-                    showprogress(app, ' Estimating High Resolution image', (iter/params.maxIter*100));
-                    
-                    % Compute gradient of the energy part of the cost function
-                    Gback = GradientBackProject(HR, stack_r, D, Hpsf, resFactor);
-                    
-                    % Compute the gradient of the bilateral filter part of the cost function
-                    Greg = GradientRegulization(HR, params.P, params.alpha);
-                    
-                    % Perform a single SD step
-                    HR = HR - params.beta.*(Gback + params.lambda.* Greg);
-                    
-                    iter=iter+1;
-                end
+                [HR, iter] = RobustSR(app, LR, Tvec, resFactor, Hpsf, params);
             end
             
             %% Fast Robust SR
             if app.RADIO_SR_FastRobust.Value
-                % project the translation to the new image size, rounded to
-                % the nearest neighbour
-                D = round(Tvec.*resFactor);
-                
-                %backproject the rounded vector to the initial size
-                Dr = floor(D/resFactor);
-                D = mod(D,resFactor)+resFactor;
-                
-                % LR = app.LRstack;
-                
-                [X,Y] = meshgrid(1:size(LR, 2), 1:size(LR, 1));
-
-                for i=1:size(LR, 3)
-                    LR(:,:,i) = interp2(X+Dr(i,1), Y+Dr(i,2), LR(:,:,i), X, Y, '*nearest');
-                end
-                stack_r = LR(3:end-2,3:end-2,:);
-                
-                % Compute initial estimate of blurred HR by the means of MedianAndShift
-                [Z, A] = MedianAndShift(stack_r, D, [(size(stack_r,1)+1)*resFactor-1 (size(stack_r,2)+1)*resFactor-1], resFactor);
-
-                % Deblur the HR image and regulate using bilatural filter
-                
-                % Loop and improve HR in steepest descent direction
-                HR = Z;
-                iter = 1;
-                
-                while iter<params.maxIter
-                    showprogress(app, ' Estimating High Resolution image', (iter/params.maxIter*100));
-                    
-                    % Compute gradient of the energy part of the cost function
-                    Gback = FastGradientBackProject(HR, Z, A, Hpsf);
-                    
-                    % Compute the gradient of the bilateral filter part of the cost function
-                    Greg = GradientRegulization(HR, params.P, params.alpha);
-                    
-                    % Perform a single SD step
-                    HR = HR - params.beta.*(Gback + params.lambda.* Greg);
-                    
-                    iter=iter+1; 
-                end
+                [HR, iter] = FastRobustSR(app, LR, Tvec, resFactor, Hpsf, params);
             end
-            showprogress(app, '', 100);
+            ShowProgress(app, '', 100);
         end
-        
-        function showprogress(app, title, perc)
-            app.StatusPanel.Title = strcat('Status: ', title);
-            numBars = uint8(perc/10);
-            
-            switch(numBars)
-                case 0
-                    app.perc0.Visible = true;
-                case 1
-                    app.perc1.Visible = true;
-                case 2
-                    app.perc2.Visible = true;
-                case 3
-                    app.perc3.Visible = true;
-                case 4
-                    app.perc4.Visible = true;
-                case 5
-                    app.perc5.Visible = true;
-                case 6
-                    app.perc6.Visible = true;
-                case 7
-                    app.perc7.Visible = true;
-                case 8
-                    app.perc8.Visible = true;
-                case 9
-                    app.perc9.Visible = true;
-                case 10
-                    app.perc0.Visible = false;
-                    app.perc1.Visible = false;
-                    app.perc2.Visible = false;
-                    app.perc3.Visible = false;
-                    app.perc4.Visible = false;
-                    app.perc5.Visible = false;
-                    app.perc6.Visible = false;
-                    app.perc7.Visible = false;
-                    app.perc8.Visible = false;
-                    app.perc9.Visible = false;
-                    app.StatusPanel.Title = 'Status: ';
-            end
-            drawnow
-        end
+
     end
 
 
@@ -509,6 +180,7 @@ classdef MFSR_App < matlab.apps.AppBase
             % Load all components
             addpath([pwd '/Helper']);
             % Image Registration
+            addpath([pwd '/ImageRegistration/Matlab']);
             addpath([pwd '/ImageRegistration/LKOFlow']);
             addpath([pwd '/ImageRegistration/LKOFlowAffine']);
             addpath([pwd '/ImageRegistration/affine_Flow']);
@@ -621,7 +293,7 @@ classdef MFSR_App < matlab.apps.AppBase
             end
             
             tic;
-            [app.HRimage, iter] = superResolution(app, app.LRstack, app.TM, resFactor, params, Hpsf);
+            [app.HRimage, iter] = superResolution(app, app.LRstack, app.TM, resFactor, Hpsf, params);
             
             % fill the benchmark measurement table
             app.VAL_SR_t.Text = num2str(toc);

@@ -1,43 +1,68 @@
-% D=RegisterImageSeqAffine(M)
-%
 % Affine Image-Registration of a given sequence of images
-function D=RegisterImageSeqAffine(M)
+%
+% This function uses a Lucas-Kanade method to register images 
+% based on their translatory, rotational and shearing deviation.
+% It uses a hierarchical gradient-based optimization method, 
+% using 6 levels of Low-Pass filtering for calculation of the 
+% optical flow parameters between two images
+%
+% Inputs:
+% app - instance of the main app
+% stack - A sequence of low resolution images
+%
+% Outputs:
+% LR_reg - The low resolution stack with registered images
+% Tvec - The tranlational motion for each LR frame
+% iter - Steps needed for registration
+% err - Sum of error during registration
+function [LR_reg, Tvec, iter, err]=RegisterImageSeqAffine(app, stack)
 
-% Initialize d to an empty affine displacement transformation
-D=zeros(2,3,size(M,3));
+    % Init variables
+    iter = 0; err = 0;
+    
+    % Get baseframe
+    baseFrame = squeeze(stack(:,:,1));
+    height = size(baseFrame,1);
+    width = size(baseFrame,2);
+    
+    % Create the region of continuous flow for lowest hierarchy
+    % level of the gaussian pyramid
+    roi=[2 2 size(stack,1)-1 size(stack,2)-1];
 
-roi=[2 2 size(M,1)-1 size(M,2)-1];
+    % Initialize transformation matrix
+    D = [1 0 0; 0 1 0];
 
-Mprev = squeeze(M(:,:,1));
+    for i=2:size(stack,3)
 
-h=waitbar(0, 'Calculating Affine Registration');
+        ShowProgress(app, 'Image Registration in progress...', (i/size(stack,3))*100);
 
-d=[1 0 0; 0 1 0];
-D(:,:,1)=d;
+        % Register current image to previous frame
+        dc = PyramidalLKOpticalFlowAffine(baseFrame, squeeze(stack(:,:,i)), roi);
 
-for i=2:size(M,3)
-  
-  waitbar(i/size(M,3));
-  
-  % Register current image to previous frame
-  dc=PyramidalLKOpticalFlowAffine(Mprev, squeeze(M(:,:,i)), roi);
-  
-  % Save current image
-  Mprev = squeeze(M(:,:,i));
+        % Set the current frame as base-frame for the next iteration
+        baseFrame = squeeze(stack(:,:,i));
 
-  % Add current displacement to d (This is actually concatinating the two
-  % affine matrixes)
-  d=d+reshape(dc, 2, 3)*(eye(3)+[d;0 0 0]);
+        % Add current displacement dc to D (This is actually concatinating the two
+        % affine matrixes)
+        D = D + reshape(dc, 2, 3)*(eye(3)+[D;0 0 0]);
 
-  % Compute displacement at current level
-  d=IterativeLKOpticalFlowAffine(squeeze(M(:,:,1)), squeeze(M(:,:,i)), roi, d);
-  
-  % Transform current image
-  %M(:,:,i)=ResampleImgAffine(M(:,:,i), [1 1 size(M,1) size(M,2)], d);
-  D(:,:,i)=d;
+        % Compute displacement at current level
+        [D,k,e] = IterativeLKOpticalFlowAffine(squeeze(stack(:,:,1)), squeeze(stack(:,:,i)), roi, D);
 
-  %figure;imagesc(M(:,:,i));title('reg2base refined');set(gcf,'name', 'reg2base refined');
+        % Set the return value for translation vector
+        Tvec(i,:) = [D(1,3), D(2,3)];
+
+        % Perform MATLAB Image Registration
+        tform = affine2d([ D(1,1) D(2,1) 0; D(1,2) D(2,2) 0; 0 0 1]);
+        I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
+
+        % LKFlowAffine performs a weird zoom, so we have to
+        % resize the images to get size-normalized results
+        LR_reg(:,:,i) = imresize(I, [height, width]);
+
+        % Sum up the iterations and errors
+        iter = iter + k;
+        err = err + e;
+    end
 
 end
-
-close(h);
