@@ -180,6 +180,7 @@ classdef MFSR_App < matlab.apps.AppBase
                     
                     % Compute displacement at current level
                     [D,k,e] = IterativeLKOpticalFlowAffine(squeeze(stack(:,:,1)), squeeze(stack(:,:,i)), roi, D);
+                    LR_reg(:,:,i) = ResampleImgAffine(stack(:,:,i), [1 1 size(stack,1), size(stack,2)], D);
                     
                     % set the return value for translation vector
                     Tvec(i,:) = [D(1,3), D(2,3)];
