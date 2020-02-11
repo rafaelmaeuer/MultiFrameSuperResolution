@@ -183,8 +183,6 @@ classdef MFSR_App < matlab.apps.AppBase
             addpath([pwd '/ImageRegistration/Matlab']);
             addpath([pwd '/ImageRegistration/LKOFlow']);
             addpath([pwd '/ImageRegistration/LKOFlowAffine']);
-            addpath([pwd '/ImageRegistration/affine_Flow']);
-            
             % Super Resolution
             addpath([pwd '/SuperResolution/SplineInterpolation']);
             addpath([pwd '/SuperResolution/AdaptiveKernel']);
