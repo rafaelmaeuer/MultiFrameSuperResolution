@@ -32,7 +32,7 @@ function [LR_reg, Tvec]=RegisterImageSeqMatlab(app, stack)
         I = imwarp(stack(:,:,i), tform, 'cubic', 'FillValues', 128);
 
         % Crop Image to initial size
-        LR_reg(:,:,i) = APP_cropImage(I, width, height);
+        LR_reg(:,:,i) = CropImage(I, width, height);
     end
     
 end

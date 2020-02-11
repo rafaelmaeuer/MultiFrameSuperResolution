@@ -1,4 +1,4 @@
-function img = APP_buildIMG(theFrame)
+function img = BuildImage(theFrame)
     % display first frame in LR Image container.
     % IMG object expects a MxNx3 (rgb) matrix, so we just copy the
     % pixel data to all color channels:

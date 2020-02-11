@@ -43,7 +43,7 @@ function [LR_reg, Tvec, iter, err]=RegisterImageSeq(app, stack)
         % Perform Image registration
         tform = affine2d([ 1 0 0; 0 1 0; D(1) D(2) 1]);
         I = imwarp(stack(:,:,i),tform,'cubic','FillValues',128);
-        LR_reg(:,:,i) = APP_cropImage(I, width, height);
+        LR_reg(:,:,i) = CropImage(I, width, height);
 
         % Sum up the iterations and errors
         iter = iter + k;

@@ -149,12 +149,12 @@ classdef MFSR_App < matlab.apps.AppBase
             
             %% Adaptive Kernel Regression
             if app.RADIO_SR_KernelReg.Value
-                [HR, iter] = AdaptiveKernel(app, LR, resFactor, params);
+                [HR, iter] = AdaptiveKernelRegression(app, LR, resFactor, params);
             end
             
             %% Cubic Spline Interpolation
             if app.RADIO_SR_Cubic.Value
-                [HR, iter] = SplineSRInterp(app, LR, resFactor, Hpsf, params);
+                [HR, iter] = CubicSplineInterp(app, LR, resFactor, Hpsf, params);
             end
             
             %% Robust SR
@@ -205,7 +205,7 @@ classdef MFSR_App < matlab.apps.AppBase
                 app.LRstack = inVideo;
                 app.frameCnt = 1;
                 
-                app.IMG_LR.ImageSource = APP_buildIMG(inVideo(:,:,1));
+                app.IMG_LR.ImageSource = BuildImage(inVideo(:,:,1));
                 
                 % Fill the sequence info table
                 app.VAL_imInfo_format.Text = FileName(end-3:end);
@@ -298,7 +298,7 @@ classdef MFSR_App < matlab.apps.AppBase
             app.VAL_SR_err.Text = 'n.A.'; % num2str(err);
             app.VAL_SR_n.Text = num2str(iter);
             
-            app.IMG_HR.ImageSource = APP_buildIMG(app.HRimage);
+            app.IMG_HR.ImageSource = BuildImage(app.HRimage);
             
             app.BTN_saveHRFrame.Enable = true;
             

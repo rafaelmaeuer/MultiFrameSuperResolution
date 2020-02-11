@@ -12,7 +12,7 @@
 % Outputs:
 % HR - The estimated HR image
 % iter - Steps needed for estimation
-function [HR, iter]=SplineSRInterp(app, LR, resFactor, Hpsf, params)
+function [HR, iter]=CubicSplineInterp(app, LR, resFactor, Hpsf, params)
 
     % Initialize guess as interpolated version of LR
     [X,Y]=meshgrid(0:resFactor:(size(LR,2)-1)*resFactor, 0:resFactor:(size(LR,1)-1)*resFactor);

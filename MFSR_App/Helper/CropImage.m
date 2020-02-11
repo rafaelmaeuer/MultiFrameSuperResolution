@@ -1,4 +1,4 @@
-function [croppedIm] = APP_cropImage(theImage, refWidth, refHeight)
+function [croppedIm] = CropImage(theImage, refWidth, refHeight)
     
     % get dimensions of the image to be cropped
     imHeight = size(theImage,1);
