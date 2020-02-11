@@ -82,6 +82,7 @@ classdef MFSR_App < matlab.apps.AppBase
     
     methods (Access = private)
         
+        % Get parameters from GUI and set some internal
         function [params, resFactor, Hpsf] = collectParams(app)
             
             % Parameter for resolution factor
@@ -98,7 +99,6 @@ classdef MFSR_App < matlab.apps.AppBase
             params.beta = 1;        % Step Size of the steepest descent optimization
             params.lambda = 0.04;   % Regularization Parameter weighting the 
                                     % regularization cost-function
-                        
             params.P = 4;           % Number of shifts to calculate the regularization
                                     % cost-function
                         
@@ -106,10 +106,9 @@ classdef MFSR_App < matlab.apps.AppBase
             params.maxIter = app.PARAM_Iterations.Value;
         end
         
+        % Returns the translation vector for each frame f with respect to the
+        % reference frame (first frame in stack) and the registered stack of images
         function [LR_reg, Tvec, iter, err] = getTransform(app)
-            % Returns the translation vector for each
-            % frame f with respect to the reference frame (first frame in
-            % stack) and the registered stack of images
             
             % initialize Progress bar
             ShowProgress(app, 'Image Registration in progress...', 0);
@@ -144,6 +143,7 @@ classdef MFSR_App < matlab.apps.AppBase
             err = err/(size(stack,3)-1);
         end
         
+        % Computes the HR frame from the registered LR stack
         function [HR, iter] = superResolution(app, LR, Tvec, resFactor, Hpsf, params)
             ShowProgress(app, ' Estimating High Resolution image', 0);
             
@@ -177,6 +177,7 @@ classdef MFSR_App < matlab.apps.AppBase
 
         % Code that executes after component creation
         function startupFcn(app)
+            
             % Load all components
             addpath([pwd '/Helper']);
             % Image Registration
@@ -194,17 +195,25 @@ classdef MFSR_App < matlab.apps.AppBase
 
         % Button pushed function: BTN_loadFile
         function BTN_loadFileButtonPushed(app, event)
+            
+            % Set file formats allowed to open
             filter = '*.avi;*.mov;*.mp4;.m4v;';
             [FileName,PathName] = uigetfile(filter,'Select the movie file (avi, mov, mp4, m4v)');
+            
+            % Fix for GUI to get focus after loading file
             drawnow;
             figure(app.MFSRToolUIFigure);
             
+            % Check if file exists
             if FileName ~= 0
                 % Load video file
                 inVideo = LoadVideo([PathName FileName]);
+                
+                % Set the LR stack
                 app.LRstack = inVideo;
                 app.frameCnt = 1;
                 
+                % Set preview image for LR stack
                 app.IMG_LR.ImageSource = BuildImage(inVideo(:,:,1));
                 
                 % Fill the sequence info table
@@ -228,14 +237,14 @@ classdef MFSR_App < matlab.apps.AppBase
             
             % Display the next frame in the stack
             app.frameCnt = app.frameCnt + 1;
-            app.IMG_LR.ImageSource = APP_buildIMG(app.LRstack(:,:,app.frameCnt));
+            app.IMG_LR.ImageSource = BuildImage(app.LRstack(:,:,app.frameCnt));
             
-            % If we hit the ceiling, disable 'next' button
+            % When passing the last frame, disable 'next' button
             if app.frameCnt == size(app.LRstack,3)
                 app.BTN_next.Enable = 'off';
             end
             
-            % if we're past the first frame, enable 'previus' button
+            % When passing the first frame, enable 'previus' button
             if app.frameCnt > 1
                 app.BTN_prev.Enable = 'on';
             end
@@ -246,14 +255,14 @@ classdef MFSR_App < matlab.apps.AppBase
             
             % Display the previous frame in the stack
             app.frameCnt = app.frameCnt - 1;
-            app.IMG_LR.ImageSource = APP_buildIMG(app.LRstack(:,:,app.frameCnt));
+            app.IMG_LR.ImageSource = BuildImage(app.LRstack(:,:,app.frameCnt));
             
-            % if we hit the bottom, disable 'previous' button
+            % At the first frame, disable 'previous' button
             if app.frameCnt == 1
                 app.BTN_prev.Enable = 'off';
             end
             
-            % if we're below the last frame, enable 'next' button
+            % If multiple frames, enable 'next' button
             if app.frameCnt < size(app.LRstack,3)
                 app.BTN_next.Enable = 'on';
             end
@@ -261,13 +270,11 @@ classdef MFSR_App < matlab.apps.AppBase
 
         % Button pushed function: BTN_saveLRFrame
         function BTN_saveLRFrameButtonPushed(app, event)
-            [FileName,PathName] = uiputfile('*.jpg','Save image file');
-            drawnow;
-            figure(app.MFSRToolUIFigure);
-            
-            if FileName ~= 0
-              imwrite(uint8(app.LRstack(:,:,app.frameCnt)), [PathName FileName]);
-            end
+
+            % Save LR image to file
+            image = app.LRstack(:,:,app.frameCnt);
+            SaveFile(app, image);
+
         end
 
         % Button pushed function: BTN_enhance
@@ -280,50 +287,59 @@ classdef MFSR_App < matlab.apps.AppBase
             % the sequence using the method chosen in the GUI
             if(~app.imReg_flag)
                 tic;
+                % Perform Image Registration
                 [app.LR_reg, app.TM, iter, err] = getTransform(app);
                 
-                % fill the benchmark measurement table
+                % Fill the benchmark measurement table
                 app.VAL_IR_t.Text = num2str(toc);
                 app.VAL_IR_err.Text = num2str(err);
                 app.VAL_IR_n.Text = num2str(iter);
-
+                
+                % Set the image registration flag
                 app.imReg_flag = true;
             end
             
             tic;
+            % Perform Super Resolution
             [app.HRimage, iter] = superResolution(app, app.LRstack, app.TM, resFactor, Hpsf, params);
             
-            % fill the benchmark measurement table
+            % Fill the benchmark measurement table
             app.VAL_SR_t.Text = num2str(toc);
             app.VAL_SR_err.Text = 'n.A.'; % num2str(err);
             app.VAL_SR_n.Text = num2str(iter);
             
+            % Set preview image of HR frame
             app.IMG_HR.ImageSource = BuildImage(app.HRimage);
             
+            % Enable save button
             app.BTN_saveHRFrame.Enable = true;
             
         end
 
         % Button pushed function: BTN_saveHRFrame
         function BTN_saveHRFrameButtonPushed(app, event)
-            [FileName,PathName] = uiputfile('*.jpg','Save image file');
-            drawnow;
-            figure(app.MFSRToolUIFigure);
             
-            if FileName ~= 0
-              imwrite(uint8(app.HRimage), [PathName FileName]);
-            end
+            % Save HR image to file
+            image = app.HRimage;
+            SaveFile(app, image);
+            
         end
 
         % Selection changed function: RADIOGROUP_IR_Method
         function RADIOGROUP_IR_MethodSelectionChanged(app, event)
+            
+            % Reset image registration flag
             app.imReg_flag = false;
             
         end
 
         % Button pushed function: BTN_reset
         function BTN_resetButtonPushed(app, event)
+            
+            % Reset image registration flag
             app.imReg_flag = false;
+            
+            % Reset preview image of HR frame
             app.IMG_HR.ImageSource = '';
             drawnow
         end
