@@ -60,3 +60,11 @@ Check the `Papers` folder to get more information about the implemented algorith
 - Fast and Robust Multiframe Super Resolution (by Sina Farsiu et al.) [Link](http://people.duke.edu/~sf59/SRfinal.pdf)
 - Pyramidal Implementation of the Lucas Kanade Feature Tracker (by Jean-Yves Bouguet) [Link](http://robots.stanford.edu/cs223b04/algo_tracking.pdf)
 - Video Super-Resolution by Adaptive Kernel Regression (by Mohammad Moinul Islam et al.) [link](https://link.springer.com/chapter/10.1007/978-3-642-10520-3_76)
+
+## TODO
+
+- Improve performance (check parallel processing of algorithms)
+- Add more configuration parameters in "Advanced Settings" section
+- Add option to play LR-Video instead of next and prev buttons
+- Optimize GUI adaptiveness when changing window-size or in fullscreen
+- Add option to show registered frames in LR-Video preview
