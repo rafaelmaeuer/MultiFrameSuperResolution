@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="4039819444" file="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App.prj" location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App" name="MFSR_App" preferred-package-location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="4039819444" file="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\Project\MFSR_App.prj" location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\Project" name="MFSR_App" preferred-package-location="C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\Project" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>MFSR_Tool</param.appname>
     <param.icon>${PROJECT_ROOT}\MFSR_App_resources\icon.ico</param.icon>
     <param.icons>
@@ -30,7 +30,7 @@ Super-Resolution Algorithms:
     <param.guid />
     <param.installpath.string>\MFSR_Tool\</param.installpath.string>
     <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
-    <param.logo>${PROJECT_ROOT}\MFSR_App_resources\MFSR_Splash_150x300.png</param.logo>
+    <param.logo>C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App_resources\MFSR_Splash_150x300.png</param.logo>
     <param.install.notes />
     <param.target.install.notes />
     <param.intermediate>C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows</param.intermediate>
@@ -81,7 +81,7 @@ Super-Resolution Algorithms:
       <param.example />
     </unset>
     <fileset.main>
-      <file>${PROJECT_ROOT}\MFSR_App.mlapp</file>
+      <file>C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App.mlapp</file>
     </fileset.main>
     <fileset.resources />
     <fileset.package />
