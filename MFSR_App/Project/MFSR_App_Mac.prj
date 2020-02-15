@@ -1,0 +1,189 @@
+<deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
+  <configuration build-checksum="4039819444" file="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/MFSR_App.prj" location="/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App" name="MFSR_App" preferred-package-location="/Users/rafael/Documents/MATLAB/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_App\MFSR_App\for_redistribution" target="target.ezdeploy.standalone" target-name="Application Compiler">
+    <param.appname>MFSR_Tool</param.appname>
+    <param.icon>${PROJECT_ROOT}/MFSR_App_resources/icon.icns</param.icon>
+    <param.icons>
+      <file>${PROJECT_ROOT}/MFSR_App_resources/icon_48.png</file>
+      <file>${PROJECT_ROOT}/MFSR_App_resources/icon_32.png</file>
+      <file>${PROJECT_ROOT}/MFSR_App_resources/icon_24.png</file>
+      <file>${PROJECT_ROOT}/MFSR_App_resources/icon_16.png</file>
+    </param.icons>
+    <param.version>2.0</param.version>
+    <param.authnamewatermark>Muellner, Maeuer, Schoettler, Kloos</param.authnamewatermark>
+    <param.email>den_michael.muellner@smail.th-koeln.de</param.email>
+    <param.company>TH Koeln</param.company>
+    <param.summary>A Multiframe Super-Resolution Toolkit</param.summary>
+    <param.description>Tool to compute an image of higher resolution from a video of low resolution images.
+Choose from multiple Image-Registration methods and Super-Resolution algorithms.
+
+Image-Registration methods:
+- MATLAB Image Registration
+- Lukas-Kanade Optical Flow Affine
+- Lucas-Kanade Optical Flow Motion
+
+Super-Resolution Algorithms:
+- Adaptive Kernel Regression
+- Cubic Spline Interpolation
+- Robust Super Resolution
+- Fast Robust Super Resolution</param.description>
+    <param.screenshot>${PROJECT_ROOT}/MFSR_App_resources/MFSR_Icon_400x400.png</param.screenshot>
+    <param.guid />
+    <param.installpath.string>/MFSR_Tool/</param.installpath.string>
+    <param.installpath.combo>option.installpath.systemwideapp</param.installpath.combo>
+    <param.logo>${PROJECT_ROOT}/MFSR_App_resources/MFSR_Splash_150x300.png</param.logo>
+    <param.install.notes />
+    <param.target.install.notes>In the following directions, replace MR/v97 by the directory on the target machine where MATLAB is installed, or MR by the directory where the MATLAB Runtime is installed.
+
+If the environment variable DYLD_LIBRARY_PATH is undefined, set it to the following string:
+
+MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci64
+
+If it is defined, set it to the following:
+
+${DYLD_LIBRARY_PATH}:MR/v97/runtime/maci64:MR/v97/sys/os/maci64:MR/v97/bin/maci64</param.target.install.notes>
+    <param.intermediate>${PROJECT_ROOT}/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows</param.intermediate>
+    <param.files.only>${PROJECT_ROOT}/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows</param.files.only>
+    <param.output>${PROJECT_ROOT}/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows</param.output>
+    <param.logdir>${PROJECT_ROOT}/MFSR_App</param.logdir>
+    <param.enable.clean.build>false</param.enable.clean.build>
+    <param.user.defined.mcr.options />
+    <param.target.type>subtarget.standalone</param.target.type>
+    <param.support.packages />
+    <param.web.mcr>true</param.web.mcr>
+    <param.package.mcr>false</param.package.mcr>
+    <param.no.mcr>false</param.no.mcr>
+    <param.web.mcr.name>MFSR_Installer_web</param.web.mcr.name>
+    <param.package.mcr.name>MFSR_Installer</param.package.mcr.name>
+    <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
+    <param.windows.command.prompt>false</param.windows.command.prompt>
+    <param.create.log>false</param.create.log>
+    <param.log.file />
+    <param.native.matlab>false</param.native.matlab>
+    <param.checkbox>false</param.checkbox>
+    <param.example />
+    <param.help.text>Syntax 
+	  -? 
+	 
+ Input Arguments 
+	 -?  print help on how to use the application 
+	 input arguments</param.help.text>
+    <unset>
+      <param.guid />
+      <param.installpath.combo />
+      <param.install.notes />
+      <param.logdir />
+      <param.enable.clean.build />
+      <param.user.defined.mcr.options />
+      <param.target.type />
+      <param.support.packages />
+      <param.web.mcr />
+      <param.package.mcr />
+      <param.no.mcr />
+      <param.no.mcr.name />
+      <param.windows.command.prompt />
+      <param.create.log />
+      <param.log.file />
+      <param.native.matlab />
+      <param.checkbox />
+      <param.example />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}/MFSR_App.mlapp</file>
+    </fileset.main>
+    <fileset.resources />
+    <fileset.package />
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}/Helper/BuildImage.m</file>
+      <file>${PROJECT_ROOT}/Helper/CropImage.m</file>
+      <file>${PROJECT_ROOT}/Helper/GradientRegulization.m</file>
+      <file>${PROJECT_ROOT}/Helper/LoadVideo.m</file>
+      <file>${PROJECT_ROOT}/Helper/MedianAndShift.m</file>
+      <file>${PROJECT_ROOT}/Helper/SaveFile.m</file>
+      <file>${PROJECT_ROOT}/Helper/ShowProgress.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/ComputeLKFlowParms.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/GaussianDownSample.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/GuassianPyramid.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/IterativeLKOpticalFlow.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/PyramidalLKOpticalFlow.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/RegisterImageSeq.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlow/ResampleImg.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/ComputeLKFlowParmsAffine.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/GaussianDownSampleAffine.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/GuassianPyramidAffine.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/IterativeLKOpticalFlowAffine.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/PyramidalLKOpticalFlowAffine.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/RegisterImageSeqAffine.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/LKOFlowAffine/ResampleImgAffine.m</file>
+      <file>${PROJECT_ROOT}/ImageRegistration/Matlab/RegisterImageSeqMatlab.m</file>
+      <file>${PROJECT_ROOT}/SuperResolution/AdaptiveKernel/AdaptiveKernelRegression.m</file>
+      <file>${PROJECT_ROOT}/SuperResolution/FastRobust/FastGradientBackProject.m</file>
+      <file>${PROJECT_ROOT}/SuperResolution/FastRobust/FastRobustSR.m</file>
+      <file>${PROJECT_ROOT}/SuperResolution/Robust/GradientBackProject.m</file>
+      <file>${PROJECT_ROOT}/SuperResolution/Robust/RobustSR.m</file>
+      <file>${PROJECT_ROOT}/SuperResolution/SplineInterpolation/CubicSplineInterp.m</file>
+    </fileset.depfun>
+    <build-deliverables>
+      <file location="${PROJECT_ROOT}/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows" name="MFSR_Tool.app" optional="false">/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows/MFSR_Tool.app</file>
+      <file location="${PROJECT_ROOT}/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows" name="splash.png" optional="false">/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows/splash.png</file>
+      <file location="${PROJECT_ROOT}/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows" name="readme.txt" optional="true">/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows/readme.txt</file>
+      <file location="${PROJECT_ROOT}/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows" name="run_MFSR_Tool.sh" optional="false">/Users/rafael/Development/TH-Koeln/AVT/MultiFrameSuperResolution/MFSR_App/C:\Users\DMuellner\Documents\MATLAB\AVT\MultiFrameSuperResolution\MFSR_Tool\Windows/run_MFSR_Tool.sh</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>/Applications/MATLAB_R2019b.app</root>
+      <toolboxes>
+        <toolbox name="matlabcoder" />
+        <toolbox name="embeddedcoder" />
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabhdlcoder" />
+        <toolbox name="neuralnetwork" />
+        <toolbox name="polyspacebugfinder" />
+      </toolboxes>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <embeddedcoder>
+          <enabled>true</enabled>
+        </embeddedcoder>
+      </toolbox>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabhdlcoder>
+          <enabled>true</enabled>
+        </matlabhdlcoder>
+      </toolbox>
+      <toolbox>
+        <neuralnetwork>
+          <enabled>true</enabled>
+        </neuralnetwork>
+      </toolbox>
+      <toolbox>
+        <polyspacebugfinder>
+          <enabled>true</enabled>
+        </polyspacebugfinder>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>true</unix>
+      <mac>true</mac>
+      <windows>false</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.15.2</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>maci64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>
